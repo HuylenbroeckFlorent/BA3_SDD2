@@ -1,2 +1,8 @@
-public class exercice_preliminaire{
-}
+Algorithm belongsToScene :
+  Input : BSP, a  binary space partition descripting the scene.
+          A, a point that has the coordonates (xa, ya).
+          B, a point that has the coordonates (xb, yb).
+  Output : Boolean wheter if the segment AB belongs to the scene.
+	Effects : None.
+
+belongsToScene(BSP,A,B)
