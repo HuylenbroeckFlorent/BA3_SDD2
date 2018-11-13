@@ -6,3 +6,16 @@ Algorithm belongsToScene :
   Effects : None.
 
 belongsToScene(BSP,A,B)
+  d <- (yb-ya)/(xb-xa) #Coeficient angulaire
+  appartient <- rechercher(BSP, A, B, d)
+  retourner appartient
+  
+rechercher(BSP, P, B, d)
+  S[] <- localiser(P)
+  réduire S[] selon d           #réduit a 1 ou 0 set (P,P')
+  si P' (pas sur un bord)
+     si P' =/= B
+        retourner False
+     sinon 
+        retourner True
+  sinon retourner rechercher(BSP, P', B, d)
