@@ -1,0 +1,1 @@
+Rechercher un des deux points, voir a quel segment il appartient, relancer la recherche depuis le bot de ce segment récursivement, sion trouve l'autre point bingo
