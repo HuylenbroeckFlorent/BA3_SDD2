@@ -3,6 +3,6 @@ Algorithm belongsToScene :
           A, a point denoted by (xa, ya).
           B, a point denoted by (xb, yb).
   Output : Boolean wheter if the segment AB belongs to the scene.
-	Effects : None.
+  Effects : None.
 
 belongsToScene(BSP,A,B)
