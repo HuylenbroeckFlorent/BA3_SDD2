@@ -124,10 +124,8 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \State $P'\gets$ extremité de $segment$ qui n'est pas $P$
 \If{$P'== B$}
 \State \textbf{retourner} True
-\Else
-\If{$P'$ sur un bord}
+\ElsIf{$P'$ sur un bord}
 \State \textbf{retourner} \Call{rechercher}{$BSP,P',B,d$}
-\EndIf
 \EndIf
 \EndFor
 \EndIf
