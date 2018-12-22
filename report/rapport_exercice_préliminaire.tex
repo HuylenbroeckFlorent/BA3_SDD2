@@ -1,0 +1,198 @@
+\documentclass[10pt]{article}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+
+\begin{document}
+\begin{titlepage}
+\title{\Huge \textbf{Structure de données II :\\
+Rapport de l'étape préliminaire du projet}\\
+\smallskip
+\author{\emph{Groupe 5 :} \\
+HUYLENBROECK Florent\\
+DACHY Corentin\\}
+}
+\date{Année Académique 2018-2019\\
+Bachelier en Sciences Informatiques\\
+\vspace{1cm}
+Faculté des Sciences, Université de Mons}
+\maketitle
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+\section{Introduction}
+Pour ce travail, voici les consignes qui nous on été demandées :\\
+\begin{quote}
+Pour se familiariser avec les arbres BSP (\emph{Binary space partitions}), il vous est demandé de réaliser l’exercice préliminaire suivant :\\[.5cm]
+Etant donné un arbre BSP représentant une scène dans un plan (ensemble de segments) et deux points $x$ et $y$ dans ce plan, donnez un algorithme recursif en pseudo-code qui indique si le segment d’extrémités $x$ et $y$ appartient à la scène.  Veuillez accompagner votre algorithme :
+\begin{itemize}
+\item d’une explication de son fonctionnement; et
+\item d’une discussion autour de sa complexité (ne vous limitez pas au pire des cas).
+\end{itemize}
+Nous convenons,  pour cet exercice,  que les segments contenus dans un même nœud de l’arbre BSP
+sont stockés dans une liste chaînée.\\[.5cm]
+\textbf{Remarque} : Cet exercice préliminaire n’est qu’une mise en route du projet.  Il ne sera pas nécessaire à la résolution du problème principal.
+\end{quote}
+
+
+
+
+
+
+
+\newpage
+\section{Résolution}
+\subsection{Pseudo-code}
+\begin{algorithm}[!h]
+\caption{belongsToScene}
+\begin{tabular}{lrl}
+\multicolumn{3}{l}{Détermine si un segment dont les deux extrêmités données sous formes de points en entrée appartient}\\
+\multicolumn{3}{l}{à l'arbre BSP donné en entrée.}\\
+&&\\
+\textbf{Entrées} : &$BSP$ : &Partition de recherche binaire\\
+& &On assume que chaque noeud contient l'équation de la droite qu'il décrit et (facultatif) le\\ 
+& &segment qui lui est confondu, et chaque feuille contient un segment, décrit par\\
+& &une paire de points $S(S.x,S.y)$ et $S'(S'.x,S'.y)$.\\ 
+&$A$ : &Point correspondant à une extremité du segment.\\
+& &Ce point a pour coordonnées ($A.x$,$A.y$).\\
+&$B$ : &Point correspondant à l'autre extremité du segment.\\
+& &Ce point a pour coordonnées ($B.x$,$B.y$).\\
+\textbf{Sorties} :& &Boléen, vrai si le segment appartient à la scene, faux sinon.\\
+\textbf{Effets} :& &/
+\end{tabular}
+\begin{algorithmic}[1]
+\Procedure{belongsToScene}{$BSP,A,B$}
+\State $d\gets\Call{coefficientAngulaire}{A,B}$
+\State \textbf{retourner} \Call{rechercher}{$BSP,A,B,d$}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{coefficientAngulaire}
+\begin{tabular}{lrl}
+\multicolumn{3}{l}{Calcule le coefficient angulaire d'un segment.}\\
+&&\\
+\textbf{Entrées} : &$A$ : &Racine de la sous-partition de recherche binaire que l'on doit chercher\\
+&$B$ :&Point que l'on recherche.\\
+\textbf{Sorties} :& &Le coeficient angulaire de la droite passant par $A$ et $B$.\\
+& &Une valeur sentinelle $+\infty$ sera retournée si la pente est verticale.\\
+\textbf{Effets} :& &/
+\end{tabular}
+\begin{algorithmic}[1]
+\Procedure{coeficientAngulaire}{$A,B$}
+\If{$A.x-B.x== 0$}
+\State \textbf{retourner} $+\infty$
+\Else
+\State \textbf{retourner} $(A.y-B.y)/(A.x-B.x)$
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\newpage
+
+\begin{algorithm}[!h]
+\caption{rechercher}
+\begin{tabular}{lrl}
+\multicolumn{3}{l}{Recherche récursivement un segment dans un arbre BSP.}\\
+&&\\
+\textbf{Entrées} : &$BSP$ : &Partition de recherche binaire\\
+& &On assume que chaque noeud contient l'équation de la droite qu'il décrit et (facultatif) le\\ 
+& &segment qui lui est confondu, et chaque feuille contient un segment, décrit par\\
+& &une paire de points $S(S.x,S.y)$ et $S'(S'.x,S'.y)$.\\ 
+& $P$ : &Point, premiére extremité du segment recherché dans le BSP\\
+& $B$ : &Point, deuxième extremité du segment recherché dans le BSP\\
+& $d$ : &Entier (ou valeur sentinelle $+\infty$), coeficient angulaire du segment recherché.\\
+\textbf{Sorties} :& &Boléen, vrai si le segment PB appartient au BSP\\
+\textbf{Effets} :& &/
+\end{tabular}
+\begin{algorithmic}[1]
+\Procedure{rechercher}{$BSP,P,B,d$}
+\State $S[ ] \gets$ nouvelle liste vide
+\State \Call{localiser}{$BSP,P,S[]$}
+\State \Call{reduire}{$S[],d$}
+\If{$S[]$ vide} 
+\State \textbf{retourner} False
+\Else 
+\For{segment \textbf{in} $S[]$}
+\State $P'\gets$ extremité de $segment$ qui n'est pas $P$
+\If{$P'== B$}
+\State \textbf{retourner} True
+\Else
+\If{$P'$ sur un bord}
+\State \textbf{retourner} \Call{rechercher}{$BSP,P',B,d$}
+\EndIf
+\EndIf
+\EndFor
+\EndIf
+\State \textbf{retourner} False
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+\newpage
+\begin{algorithm}[!h]
+\caption{localiser}
+\begin{tabular}{lrl}
+\multicolumn{3}{l}{Recherche récursivement un point donné dans les segments d'un arbre BSP}\\
+&&\\
+\textbf{Entrées} : &$root$ : &Racine de la sous-partition de recherche binaire où l'on doit chercher\\
+&$P$ :&Point que l'on recherche.\\
+&$return[]$ :&Liste contenant les résultats de la recherche.\\
+\textbf{Sorties} :& &/\\
+\textbf{Effets} :& &La liste $return[]$ est mise à jour.
+\end{tabular}
+\begin{algorithmic}[1]
+\Procedure{localiser}{$root,P,return[]$}
+\If{$root$ est une feuille}
+\If{$P\in root$}
+\State ajouter $root$ dans $return[]$
+\EndIf
+\Else
+\State $res\gets$ résultat de la résolution de l'équation de la droite décrite par $root$ avec $P.x$ et $P.y$ 
+\If{$res\geq 0$}
+\State \Call{localiser}{$root+,P,return[]$}
+\ElsIf{$res\leq 0$}
+\State \Call{localiser}{$root-,P,return[]$}
+\Else
+\If{$P\in root$}
+\State ajouter $root$ dans $return[]$
+\EndIf
+\State\Call{localiser}{$root+,P,return[]$}
+\State\Call{localiser}{$root-,P,return[]$}
+\EndIf
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+\begin{algorithm}
+\caption{reduire}
+\begin{tabular}{lrl}
+\multicolumn{3}{l}{Réduit un ensemble de segments pour ne garder que ceux qui ont un coefficient angulaire donné.}\\
+&&\\
+\textbf{Entrées} : &$S[]$ : &Ensemble de segments à réduire.\\
+& $d$ : &Entier (ou valeur sentinelle $+\infty$), coeficient angulaire du segment recherché.\\
+\textbf{Sorties} :& &/\\
+\textbf{Effets} :& &La liste $S[]$ ne contient plus que les segments qui ont un coefficient angulaire $d$.
+\end{tabular}
+\begin{algorithmic}[1]
+\Procedure{reduire}{$S[],d$}
+\ForAll{elements $s$ de $S[]$}
+\State $sd\gets$\Call{coeficientAngulaire}{$s.A,s.B$}
+\If{$sd\neq d$}
+\State retirer $s$ de $S[]$
+\EndIf
+\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+\newpage
+
+\subsection{Discussion de la complexité}
+
+\end{document}
