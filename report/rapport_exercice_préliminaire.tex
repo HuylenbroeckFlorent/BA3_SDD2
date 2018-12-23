@@ -64,9 +64,9 @@ Sert de phase d'initialisation à l'algorithme \emph{rechercher}.}}\\
 &$A$ : &Point correspondant à une extrémité du segment.\\
 & &Ce point a pour coordonnées ($A.x$,$A.y$).\\
 &$B$ : &Point correspondant à l'autre extrémité du segment.\\
-& &Ce point a pour coordonnées ($B.x$,$B.y$).\\
-\textbf{Sorties} :& &Boléen, vrai si le segment appartient à la scène, faux sinon.\\
-\textbf{Effets} :& &/
+& &Ce point a pour coordonnées ($B.x$,$B.y$).\\[.25cm]
+\textbf{Sorties} :& &Boléen, vrai si le segment appartient à la scène, faux sinon.\\[.25cm]
+\textbf{Effets} :& &/\\[.25cm]
 \end{tabular}
 \begin{algorithmic}[1]
 \Procedure{belongsToScene}{$BSP,A,B$}
@@ -83,10 +83,10 @@ Sert de phase d'initialisation à l'algorithme \emph{rechercher}.}}\\
 \multicolumn{3}{l}{\makecell[l]{Calcule le coefficient angulaire d'un segment. Renvoie la valeur sentinelle $+\infty$ si le segment est vertical.}}\\
 &&\\
 \textbf{Entrées} : &$A$ : &Point, première extrémité du segment, de coordonnées ($A.x$,$A.y$).\\
-&$B$ :&Point, deuxième extrémité du segment, de coordonnées ($B.x$,$B.y$).\\
+&$B$ :&Point, deuxième extrémité du segment, de coordonnées ($B.x$,$B.y$).\\[.25cm]
 \textbf{Sorties} :& &Le coeficient angulaire de la droite passant par $A$ et $B$.\\
-& &Une valeur sentinelle $+\infty$ sera retournée si la pente est verticale.\\
-\textbf{Effets} :& &/
+& &Une valeur sentinelle $+\infty$ sera retournée si la pente est verticale.\\[.25cm]
+\textbf{Effets} :& &/\\[.25cm]
 \end{tabular}
 \begin{algorithmic}[1]
 \Procedure{coefficientAngulaire}{$A,B$}
@@ -119,9 +119,9 @@ deuxième extrémité.}
 \textbf{Entrées} : &$BSP$ : &Partition de recherche binaire.\\
 & $P$ : &Point, première extrémité du segment recherché dans le BSP\\
 & $B$ : &Point, deuxième extrémité du segment recherché dans le BSP\\
-& $d$ : &Entier (ou valeur sentinelle $+\infty$), coefficient angulaire du segment recherché.\\
-\textbf{Sorties} :& &Boléen, vrai si le segment [PB] appartient à l'arbre BSP.\\
-\textbf{Effets} :& &/
+& $d$ : &Entier (ou valeur sentinelle $+\infty$), coefficient angulaire du segment recherché.\\[.25cm]
+\textbf{Sorties} :& &Boléen, vrai si le segment [PB] appartient à l'arbre BSP.\\[.25cm]
+\textbf{Effets} :& &/\\[.25cm]
 \end{tabular}
 \begin{algorithmic}[1]
 \Procedure{rechercher}{$BSP,P,B,d$}
@@ -171,9 +171,9 @@ la liste de retour et on rappelle la fonction sur les deux fils de $root$.}\\
 &&$root+$ représente le sous-arbre au-dessus de $root.d$, et\\
 &&$root-$ représente le sous-arbre en dessous de $root.d$ .\\
 &$P$ :&Point que l'on recherche, de coordonnées ($P.x$,$P.y$).\\
-&$return[]$ :&Liste des segments (paires de points) contenant le point recherché.\\
-\textbf{Sorties} :& &/\\
-\textbf{Effets} :& &Les segments contenant $P$ ont été ajoutés à $return[]$ .
+&$return[]$ :&Liste des segments (paires de points) contenant le point recherché.\\[.25cm]
+\textbf{Sorties} :& &/\\[.25cm]
+\textbf{Effets} :& &Les segments contenant $P$ ont été ajoutés à $return[]$ .\\[.25cm]
 \end{tabular}
 \begin{algorithmic}[1]
 \Procedure{localiser}{$root,P,return[]$}
@@ -208,9 +208,9 @@ la liste de retour et on rappelle la fonction sur les deux fils de $root$.}\\
 \multicolumn{3}{l}{Réduit un ensemble de segments pour ne garder que ceux qui ont un coefficient angulaire donné.}\\
 &&\\
 \textbf{Entrées} : &$S[]$ : &Liste de segments à réduire.\\
-& $d$ : &Entier (ou valeur sentinelle $+\infty$), coefficient angulaire du segment recherché.\\
-\textbf{Sorties} :& &/\\
-\textbf{Effets} :& &La liste $S[]$ ne contient plus que les segments qui ont un coefficient angulaire $d$.
+& $d$ : &Entier (ou valeur sentinelle $+\infty$), coefficient angulaire du segment recherché.\\[.25cm]
+\textbf{Sorties} :& &/\\[.25cm]
+\textbf{Effets} :& &La liste $S[]$ ne contient plus que les segments qui ont un coefficient angulaire $d$.\\[.25cm]
 \end{tabular}
 \begin{algorithmic}[1]
 \Procedure{reduire}{$S[],d$}
