@@ -48,6 +48,7 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \newpage
 \section{Résolution}
 \subsection{Pseudo-code}
+\subsubsection{Algorithme belongsToScene}
 \begin{algorithm}[!h]
 \caption{belongsToScene}
 \begin{tabular}{lrl}
@@ -73,6 +74,7 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \end{algorithmic}
 \end{algorithm}
 
+\subsubsection{Algorithme coefficientAngulaire}
 \begin{algorithm}
 \caption{coefficientAngulaire}
 \begin{tabular}{lrl}
@@ -95,17 +97,13 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \end{algorithmic}
 \end{algorithm}
 
-\newpage
-
-\begin{algorithm}[!h]
+\subsubsection{Algorithme rechercher}
+\begin{algorithm}[H]
 \caption{rechercher}
 \begin{tabular}{lrl}
 \multicolumn{3}{l}{Recherche récursivement un segment dans un arbre BSP.}\\
 &&\\
-\textbf{Entrées} : &$BSP$ : &Partition de recherche binaire\\
-& &On assume que chaque noeud contient l'équation de la droite qu'il décrit et (facultatif) le\\ 
-& &segment qui lui est confondu, et chaque feuille contient un segment, décrit par\\
-& &une paire de points $S(S.x,S.y)$ et $S'(S'.x,S'.y)$.\\ 
+\textbf{Entrées} : &$BSP$ : &Partition de recherche binaire.\\
 & $P$ : &Point, premiére extremité du segment recherché dans le BSP\\
 & $B$ : &Point, deuxième extremité du segment recherché dans le BSP\\
 & $d$ : &Entier (ou valeur sentinelle $+\infty$), coeficient angulaire du segment recherché.\\
@@ -121,11 +119,13 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \State \textbf{retourner} False
 \Else 
 \For{segment \textbf{in} $S[]$}
+\If{$P \in segment$}
 \State $P'\gets$ extremité de $segment$ qui n'est pas $P$
 \If{$P'== B$}
 \State \textbf{retourner} True
 \ElsIf{$P'$ sur un bord}
 \State \textbf{retourner} \Call{rechercher}{$BSP,P',B,d$}
+\EndIf
 \EndIf
 \EndFor
 \EndIf
@@ -133,34 +133,43 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
-\newpage
-\begin{algorithm}[!h]
+
+\subsubsection{Algorithme localiser}
+\begin{algorithm}[H]
 \caption{localiser}
 \begin{tabular}{lrl}
 \multicolumn{3}{l}{Recherche récursivement un point donné dans les segments d'un arbre BSP}\\
 &&\\
-\textbf{Entrées} : &$root$ : &Racine de la sous-partition de recherche binaire où l'on doit chercher\\
+\textbf{Entrées} : &$root$ : &Racine de la sous-partition de recherche binaire où l'on doit chercher.\\
+&&On assume que $root$ possède un attribut $d$ étant l'équation de la droite décrite\\
+&&par $root$ et $S$ qui contient le segment ($root$ est une feuille) ou les segments\\
+&&($root$ est un noeud) contenus dans celui-ci, sous la forme de deux points\\
+&& par segments (s'il y en a plusieurs, ils seront contenus dans une liste chainée).\\
+&&$root+$ représente le sous-arbre au dessus de $root.d$, et\\
+&&$root-$ représente le sous-arbre en dessous de $root.d$ .\\
 &$P$ :&Point que l'on recherche.\\
-&$return[]$ :&Liste contenant les résultats de la recherche.\\
+&$return[]$ :&Liste des segments (paires de points) contenant le point recherché.\\
 \textbf{Sorties} :& &/\\
-\textbf{Effets} :& &La liste $return[]$ est mise à jour.
+\textbf{Effets} :& &Les segments contenant $P$ ont été ajoutés à $return[]$ .
 \end{tabular}
 \begin{algorithmic}[1]
 \Procedure{localiser}{$root,P,return[]$}
 \If{$root$ est une feuille}
-\If{$P\in root$}
+\If{$P\in root.S$}
 \State ajouter $root$ dans $return[]$
 \EndIf
 \Else
-\State $res\gets$ résultat de la résolution de l'équation de la droite décrite par $root$ avec $P.x$ et $P.y$ 
+\State $res\gets$ résultat de la résolution de $root.d$ par le point $P.x$ et $P.y$
 \If{$res\geq 0$}
 \State \Call{localiser}{$root+,P,return[]$}
 \ElsIf{$res\leq 0$}
 \State \Call{localiser}{$root-,P,return[]$}
 \Else
-\If{$P\in root$}
-\State ajouter $root$ dans $return[]$
+\For{$segment$ in $root.S$}
+\If{$P\in segment$}
+\State ajouter $segment$ dans $return[]$
 \EndIf
+\EndFor
 \State\Call{localiser}{$root+,P,return[]$}
 \State\Call{localiser}{$root-,P,return[]$}
 \EndIf
@@ -168,7 +177,9 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
-\begin{algorithm}
+
+\subsubsection{Algorithme reduire}
+\begin{algorithm}[H]
 \caption{reduire}
 \begin{tabular}{lrl}
 \multicolumn{3}{l}{Réduit un ensemble de segments pour ne garder que ceux qui ont un coefficient angulaire donné.}\\
@@ -181,7 +192,7 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \begin{algorithmic}[1]
 \Procedure{reduire}{$S[],d$}
 \ForAll{elements $s$ de $S[]$}
-\State $sd\gets$\Call{coeficientAngulaire}{$s.A,s.B$}
+\State $sd\gets$\Call{coeficientAngulaire}{$s.x,s.y$}
 \If{$sd\neq d$}
 \State retirer $s$ de $S[]$
 \EndIf
@@ -189,8 +200,27 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
+
 \newpage
-
 \subsection{Discussion de la complexité}
-
+Dans l'étude de la complexité de nos algorithmes, nous allons nommer :
+\begin{itemize}
+\item $s$ le nombre de segments dans la scène.
+\item $h$ la hauteur de l'arbre BSP.
+\item $l$ la largeur de l'arbre BSP.
+\end{itemize}
+\subsubsection{Algorithme coefficientAngulaire}
+Dans le pire des cas comme dans un cas moyen, l'appel à cet algorithme se fait en $O(1)$.
+\subsubsection{Algorithme reduire}
+Dans le pire des cas, $S[]$ contient tous les segments de la scéne. Ce cas n'est envisageable dans notre procédure que lorsque tous les segments de la scène ont une extrêmité en commun. Il s'agira alors d'une complexité en $O(s)$ (on suppose que l'on retire les segments de la liste par index, donc en $O(1)$).\\[.5cm]
+Dans le cas moyen par contre, $S[]$ ne contiendra que quelques segments. Le corp de la boucle ne contenant que des instructions en $O(1)$, l'algorithme aura pour complexité $O($nombre de segments dans $S[])$.\\[.5cm]
+Pour la suite de la discussion, nous considérerons une complexité de $O(s)$ pour cet algorithme.
+\subsubsection{Algorithme localiser}
+Chaque appel récursif de cet algorithme "descend" d'un noeud dans l'arbre. La condition d'arrêt est que l'on atteint une ou plusieurs feuilles. Les instructions autres que les appels à la fonctions étant en $0(1)$ (affectation, ajout d'un élément à une liste) et que l'on considère (lignes $13$:$17$) que $root.S$ contient dans le pire des cas tous les segments de la scène, et dans un cas moyen un segment, on aura, dans le pire des cas une complexité en $0(h+s)$, et dans un cas moyen $O(h)$.\\[.5cm]
+\emph{Note : }il est possible qu'une récursion appelle deux fois la fonction (\emph{cf} lignes $18$:$19$, mais cela est négligeable car $O(2h)\in O(h)$.
+\subsubsection{Algorithme rechercher}
+Dans le pire des cas, le segment recherché traverse tout l'arbre BSP. On aura donc un nombre d'appel récursifs égal au nombre $l$ de feuilles de l'arbre. On a donc une complexité de $O(h+s+s$ (lignes $3$:$4$) $+ l\cdot s$ (lignes $7$:$18$ si $S[]$ contient tous les segments de la scène)$)$. Donc $O(h+s+l\cdot s)$.\\[.5cm]
+Dans un cas moyen la complexité reste $O(h+s+s\cdot l)$ par les considérations précédentes.
+\subsubsection{Algorithme belongsToScene}
+Nous avons donc au final, un algorithme ayant comme complexité $O(1+h+s+s\cdot l)$ donc $O(h+s+s\cdot l)$.
 \end{document}

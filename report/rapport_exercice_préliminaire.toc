@@ -1,4 +1,14 @@
 \contentsline {section}{\numberline {1}Introduction}{2}
 \contentsline {section}{\numberline {2}R\IeC {\'e}solution}{3}
 \contentsline {subsection}{\numberline {2.1}Pseudo-code}{3}
-\contentsline {subsection}{\numberline {2.2}Discussion de la complexit\IeC {\'e}}{6}
+\contentsline {subsubsection}{\numberline {2.1.1}Algorithme belongsToScene}{3}
+\contentsline {subsubsection}{\numberline {2.1.2}Algorithme coefficientAngulaire}{3}
+\contentsline {subsubsection}{\numberline {2.1.3}Algorithme rechercher}{4}
+\contentsline {subsubsection}{\numberline {2.1.4}Algorithme localiser}{5}
+\contentsline {subsubsection}{\numberline {2.1.5}Algorithme reduire}{6}
+\contentsline {subsection}{\numberline {2.2}Discussion de la complexit\IeC {\'e}}{7}
+\contentsline {subsubsection}{\numberline {2.2.1}Algorithme coefficientAngulaire}{7}
+\contentsline {subsubsection}{\numberline {2.2.2}Algorithme reduire}{7}
+\contentsline {subsubsection}{\numberline {2.2.3}Algorithme localiser}{7}
+\contentsline {subsubsection}{\numberline {2.2.4}Algorithme rechercher}{7}
+\contentsline {subsubsection}{\numberline {2.2.5}Algorithme belongsToScene}{7}
