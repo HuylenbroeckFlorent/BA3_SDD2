@@ -132,13 +132,11 @@ deuxième extrémité.}
 \State \textbf{retourner} False
 \Else 
 \For{segment \textbf{in} $S[]$}
-\If{$P \in segment$}
 \State $P'\gets$ extrémité de $segment$ qui n'est pas $P$
 \If{$P'== B$}
 \State \textbf{retourner} True
 \ElsIf{$P'$ sur un bord}
 \State \textbf{retourner} \Call{rechercher}{$BSP,P',B,d$}
-\EndIf
 \EndIf
 \EndFor
 \EndIf
@@ -154,7 +152,7 @@ deuxième extrémité.}
 \multicolumn{3}{l}{\makecell[l]{Recherche récursivement un point $P$ donné dans les segments d'un arbre BSP $root$.\\[.25cm]
 \begin{tabular}{rl}
 \emph{Cas de base} :&\makecell[lt]{$root$ est une feuille. Si le segment dans cette feuille contient $P$, alors $root$ est ajouté à\\
-la liste de retour.}\\
+la liste de retour.}\\[.25cm]
 \emph{Récursion} :&\makecell[lt]{On calcule $res$ le résultat de la résolution de l'équation de droite décrite par $root$ par\\
 les coordonnées de $P$ pour trouver où $P$ se situe par rapport à celle-ci.\\
 Si $P$ est à droite (\emph{resp.} gauche) de $root$ \emph{i.e.} $res>0$ (\emph{resp.} $res<0$), on\\
@@ -183,9 +181,9 @@ la liste de retour et on rappelle la fonction sur les deux fils de $root$.}\\
 \EndIf
 \Else
 \State $res\gets$ résultat de la résolution de $root.d$ par le point $P.x$ et $P.y$
-\If{$res\geq 0$}
+\If{$res>0$}
 \State \Call{localiser}{$root+,P,return[]$}
-\ElsIf{$res\leq 0$}
+\ElsIf{$res<0$}
 \State \Call{localiser}{$root-,P,return[]$}
 \Else
 \For{$segment$ in $root.S$}
@@ -242,8 +240,8 @@ Pour la suite de la discussion, nous considérerons une complexité de $O(s)$ po
 Chaque appel récursif de cet algorithme "descend" d'un noeud dans l'arbre. La condition d'arrêt est que l'on atteigne une ou plusieurs feuilles. Les instructions autres que les appels à la fonction étant en $O(1)$ (affectation, ajout d'un élément à une liste) et que l'on considère (lignes $13$:$17$) que $root.S$ contient dans le pire des cas tous les segments de la scène, et dans un cas moyen un seul segment. On aura, dans le pire des cas une complexité en $O(h+s)$, et dans un cas moyen $O(h)$.\\[.5cm]
 \emph{Note : }il est possible qu'une récursion appelle deux fois la fonction (\emph{cf} lignes $18$:$19$, mais cela est négligeable car $O(2h)\in O(h)$.
 \subsubsection{Algorithme rechercher}
-Dans le pire des cas, le segment recherché traverse tout l'arbre BSP. On aura donc un nombre d'appels récursifs égal au nombre $l$ de feuilles de l'arbre. On a donc une complexité de $O(h+s+s$ (lignes $3$:$4$) $+ l\cdot s$ (lignes $7$:$18$ si $S[]$ contient tous les segments de la scène)$)$. Donc $O(h+s+l\cdot s)$.\\[.5cm]
-Dans un cas moyen la complexité sera $O(h+s+l)$ par les considérations précédentes.
+Dans le pire des cas, le segment recherché traverse tout l'arbre BSP. On aura donc un nombre d'appels récursifs égal au nombre $l$ de feuilles de l'arbre. Notons que nous nous sommes permis d'écrire l'instruction "\emph{\textbf{else if }$P'$ sur un bord \textbf{then}}" (ligne $12$) à la place d'en écrire l'algorithme. Un tel algorithme aurait une complexité en $O(h)$. On a donc une complexité de $O(h+s+s$ (lignes $3$:$4$) $+ l\cdot s\cdot h$ (lignes $7$:$18$ si $S[]$ contient tous les segments de la scène)$)$. Donc $O(l\cdot s\cdot h)$.\\[.5cm]
+Dans un cas moyen la complexité sera $O(l\cdot h)$ par les considérations précédentes.
 \subsubsection{Algorithme belongsToScene}
-Nous avons donc, au final, un algorithme ayant comme complexité dans le pire des cas $O(1+h+s+s\cdot l)$ donc $O(h+s+s\cdot l)$ et dans un cas moyen $O(1+h+s+l)$ donc $O(h+s+l)$.
+Nous avons donc, au final, un algorithme ayant comme complexité dans le pire des cas $O(1+h+s+s\cdot l\cdot h)$ donc $O(s\cdot l\cdot h)$ et dans un cas moyen $O(1+h+s+l\cdot h)$ donc $O(l\cdot h)$.
 \end{document}
