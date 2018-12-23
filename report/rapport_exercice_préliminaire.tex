@@ -5,6 +5,7 @@
 \usepackage{algorithm}
 \usepackage{algorithmicx}
 \usepackage{algpseudocode}
+\usepackage{makecell}
 
 \begin{document}
 \begin{titlepage}
@@ -52,8 +53,8 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \begin{algorithm}[!h]
 \caption{belongsToScene}
 \begin{tabular}{lrl}
-\multicolumn{3}{l}{Détermine si un segment dont les deux extrêmités données sous formes de points en entrée appartient}\\
-\multicolumn{3}{l}{à l'arbre BSP donné en entrée.}\\
+\multicolumn{3}{l}{\makecell[l]{Détermine si un segment dont les deux extrêmités données sous formes de points en entrée appartient\\
+à l'arbre BSP donné en entrée. Sert de phase d'initialisation à l'algorithme rechercher.}}\\
 &&\\
 \textbf{Entrées} : &$BSP$ : &Partition de recherche binaire\\
 & &On assume que chaque noeud contient l'équation de la droite qu'il décrit et (facultatif) le\\ 
@@ -78,7 +79,7 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \begin{algorithm}
 \caption{coefficientAngulaire}
 \begin{tabular}{lrl}
-\multicolumn{3}{l}{Calcule le coefficient angulaire d'un segment.}\\
+\multicolumn{3}{l}{\makecell[l]{Calcule le coefficient angulaire d'un segment. Renvoie la valeur sentinelle $+\infty$ si le segment est vertical.}}\\
 &&\\
 \textbf{Entrées} : &$A$ : &Point, première extrêmité du segment, de coordonnées ($A.x$,$A.y$).\\
 &$B$ :&Point, deuxième extrêmité du segment, de coordonnées ($B.x$,$B.y$).\\
@@ -101,7 +102,18 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \begin{algorithm}[H]
 \caption{rechercher}
 \begin{tabular}{lrl}
-\multicolumn{3}{l}{Recherche récursivement un segment dans un arbre BSP.}\\
+\multicolumn{3}{l}{\makecell[l]{Recherche récursivement un segment dans un arbre BSP.\\
+Pour cela, on localise d'abord tous les segments de l'arbre BSP dont une extrêmité est la première\\
+extrêmité $P$ du segment recherché. On ne garde ensuite (dans une liste $S$) que les segments qui ont\\ 
+le même coefficient angulaire $d$ que le segment recherché.\\[.25cm]
+\begin{tabular}{rl}
+\emph{Cas de base} :&Aucun segment de $S$ ne correspond à la recherche, $False$ est retourné.\\[.25cm]
+\emph{Récursion} :&\makecell[lt]{pour chaque segment de $S$ si l'autre extrêmité $P'$ de celui-ci correspond à la\\ 
+deuxième extrêmité $B$ du segment recherché, on s'arrête et on renvoie $True$.\\
+Sinon, on regarde si le segment continue dans une autre feuille ou dans un autre\\
+noeud, si oui, on rappelle l'algorithme avec $P'$ comme point de départ et $B$ comme\\
+deuxième extrêmité.}
+\end{tabular}}}\\
 &&\\
 \textbf{Entrées} : &$BSP$ : &Partition de recherche binaire.\\
 & $P$ : &Point, premiére extremité du segment recherché dans le BSP\\
@@ -138,7 +150,17 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \begin{algorithm}[H]
 \caption{localiser}
 \begin{tabular}{lrl}
-\multicolumn{3}{l}{Recherche récursivement un point donné dans les segments d'un arbre BSP}\\
+\multicolumn{3}{l}{\makecell[l]{Recherche récursivement un point $P$ donné dans les segments d'un arbre BSP $root$\\[.25cm]
+\begin{tabular}{rl}
+\emph{Cas de base} :&\makecell[lt]{$root$ est une feuille. Si le segment dans cette feuille contient $P$, alors $root$ est ajouté à\\
+la liste de retour.}\\
+\emph{Récursion} :&\makecell[lt]{On calcule $res$ le résultat de la résolution de l'équation de droite décrite par $root$ par\\
+les coordonnées de $P$ pour trouver où $P$ se situe par rapport à celle-ci.\\
+Si $P$ est à droite (\emph{resp.} gauche) de $root$ \emph{i.e.} $res>0$ (\emph{resp.} $res<0$), on\\
+rappelle la fonction sur l'arbre de droite (\emph{resp.} gauche).\\
+Si $P$ fait parti d'un segment contenu dans $root$ \emph{i.e.} $res=0$, alors $root$ est ajouté à\\
+la liste de retour et on rappelle la fonction sur les deux fils de $root$.}\\
+\end{tabular}}}\\
 &&\\
 \textbf{Entrées} : &$root$ : &Racine de la sous-partition de recherche binaire où l'on doit chercher.\\
 &&On assume que $root$ possède un attribut $d$ étant l'équation de la droite décrite\\
