@@ -50,22 +50,22 @@ sont stockés dans une liste chaînée.\\[.5cm]
 \section{Résolution}
 \subsection{Pseudo-code}
 \subsubsection{Algorithme belongsToScene}
-\begin{algorithm}[!h]
+\begin{algorithm}[H]
 \caption{belongsToScene}
 \begin{tabular}{lrl}
-\multicolumn{3}{l}{\makecell[l]{Détermine si un segment dont les deux extrêmités données sous formes de points en entrée appartient\\
+\multicolumn{3}{l}{\makecell[l]{Détermine si un segment dont les deux extrémités sont données sous forme de points en entrée appartient\\
 exactement à l'arbre BSP donné en entrée.\\
-Sert de phase d'initialisation à l'algorithme rechercher.}}\\
+Sert de phase d'initialisation à l'algorithme \emph{rechercher}.}}\\
 &&\\
 \textbf{Entrées} : &$BSP$ : &Partition de recherche binaire\\
-& &On assume que chaque noeud contient l'équation de la droite qu'il décrit et (facultatif) le\\ 
-& &segment qui lui est confondu, et chaque feuille contient un segment, décrit par\\
-& &une paire de points $S(S.x,S.y)$ et $S'(S'.x,S'.y)$.\\ 
-&$A$ : &Point correspondant à une extremité du segment.\\
+& &On assume que chaque noeud contient l'équation de la droite qu'il décrit et\\
+&&(facultatif) le segment qui lui est confondu, et chaque feuille contient un\\
+&&segment décrit par une paire de points $S(S.x,S.y)$ et $S'(S'.x,S'.y)$.\\ 
+&$A$ : &Point correspondant à une extrémité du segment.\\
 & &Ce point a pour coordonnées ($A.x$,$A.y$).\\
-&$B$ : &Point correspondant à l'autre extremité du segment.\\
+&$B$ : &Point correspondant à l'autre extrémité du segment.\\
 & &Ce point a pour coordonnées ($B.x$,$B.y$).\\
-\textbf{Sorties} :& &Boléen, vrai si le segment appartient à la scene, faux sinon.\\
+\textbf{Sorties} :& &Boléen, vrai si le segment appartient à la scène, faux sinon.\\
 \textbf{Effets} :& &/
 \end{tabular}
 \begin{algorithmic}[1]
@@ -77,19 +77,19 @@ Sert de phase d'initialisation à l'algorithme rechercher.}}\\
 \end{algorithm}
 
 \subsubsection{Algorithme coefficientAngulaire}
-\begin{algorithm}
+\begin{algorithm}[H]
 \caption{coefficientAngulaire}
 \begin{tabular}{lrl}
 \multicolumn{3}{l}{\makecell[l]{Calcule le coefficient angulaire d'un segment. Renvoie la valeur sentinelle $+\infty$ si le segment est vertical.}}\\
 &&\\
-\textbf{Entrées} : &$A$ : &Point, première extrêmité du segment, de coordonnées ($A.x$,$A.y$).\\
-&$B$ :&Point, deuxième extrêmité du segment, de coordonnées ($B.x$,$B.y$).\\
+\textbf{Entrées} : &$A$ : &Point, première extrémité du segment, de coordonnées ($A.x$,$A.y$).\\
+&$B$ :&Point, deuxième extrémité du segment, de coordonnées ($B.x$,$B.y$).\\
 \textbf{Sorties} :& &Le coeficient angulaire de la droite passant par $A$ et $B$.\\
 & &Une valeur sentinelle $+\infty$ sera retournée si la pente est verticale.\\
 \textbf{Effets} :& &/
 \end{tabular}
 \begin{algorithmic}[1]
-\Procedure{coeficientAngulaire}{$A,B$}
+\Procedure{coefficientAngulaire}{$A,B$}
 \If{$A.x-B.x== 0$}
 \State \textbf{retourner} $+\infty$
 \Else
@@ -104,23 +104,23 @@ Sert de phase d'initialisation à l'algorithme rechercher.}}\\
 \caption{rechercher}
 \begin{tabular}{lrl}
 \multicolumn{3}{l}{\makecell[l]{Recherche récursivement un segment dans un arbre BSP.\\
-Pour cela, on localise d'abord tous les segments de l'arbre BSP dont une extrêmité est la première\\
-extrêmité $P$ du segment recherché. On ne garde ensuite (dans une liste $S$) que les segments qui ont\\ 
+Pour cela, on localise d'abord tous les segments de l'arbre BSP dont une extrémité est la première\\
+extrémité $P$ du segment recherché. On ne garde ensuite (dans une liste $S$) que les segments qui ont\\ 
 le même coefficient angulaire $d$ que le segment recherché.\\[.25cm]
 \begin{tabular}{rl}
 \emph{Cas de base} :&Aucun segment de $S$ ne correspond à la recherche, $False$ est retourné.\\[.25cm]
-\emph{Récursion} :&\makecell[lt]{pour chaque segment de $S$ si l'autre extrêmité $P'$ de celui-ci correspond à la\\ 
-deuxième extrêmité $B$ du segment recherché, on s'arrête et on renvoie $True$.\\
+\emph{Récursion} :&\makecell[lt]{pour chaque segment de $S$ si l'autre extrémité $P'$ de celui-ci correspond à la\\ 
+deuxième extrémité $B$ du segment recherché, on s'arrête et on renvoie $True$.\\
 Sinon, on regarde si le segment continue dans une autre feuille ou dans un autre\\
 noeud, si oui, on rappelle l'algorithme avec $P'$ comme point de départ et $B$ comme\\
-deuxième extrêmité.}
+deuxième extrémité.}
 \end{tabular}}}\\
 &&\\
 \textbf{Entrées} : &$BSP$ : &Partition de recherche binaire.\\
-& $P$ : &Point, premiére extremité du segment recherché dans le BSP\\
-& $B$ : &Point, deuxième extremité du segment recherché dans le BSP\\
-& $d$ : &Entier (ou valeur sentinelle $+\infty$), coeficient angulaire du segment recherché.\\
-\textbf{Sorties} :& &Boléen, vrai si le segment PB appartient au BSP\\
+& $P$ : &Point, première extrémité du segment recherché dans le BSP\\
+& $B$ : &Point, deuxième extrémité du segment recherché dans le BSP\\
+& $d$ : &Entier (ou valeur sentinelle $+\infty$), coefficient angulaire du segment recherché.\\
+\textbf{Sorties} :& &Boléen, vrai si le segment [PB] appartient à l'arbre BSP.\\
 \textbf{Effets} :& &/
 \end{tabular}
 \begin{algorithmic}[1]
@@ -133,7 +133,7 @@ deuxième extrêmité.}
 \Else 
 \For{segment \textbf{in} $S[]$}
 \If{$P \in segment$}
-\State $P'\gets$ extremité de $segment$ qui n'est pas $P$
+\State $P'\gets$ extrémité de $segment$ qui n'est pas $P$
 \If{$P'== B$}
 \State \textbf{retourner} True
 \ElsIf{$P'$ sur un bord}
@@ -151,7 +151,7 @@ deuxième extrêmité.}
 \begin{algorithm}[H]
 \caption{localiser}
 \begin{tabular}{lrl}
-\multicolumn{3}{l}{\makecell[l]{Recherche récursivement un point $P$ donné dans les segments d'un arbre BSP $root$\\[.25cm]
+\multicolumn{3}{l}{\makecell[l]{Recherche récursivement un point $P$ donné dans les segments d'un arbre BSP $root$.\\[.25cm]
 \begin{tabular}{rl}
 \emph{Cas de base} :&\makecell[lt]{$root$ est une feuille. Si le segment dans cette feuille contient $P$, alors $root$ est ajouté à\\
 la liste de retour.}\\
@@ -159,7 +159,7 @@ la liste de retour.}\\
 les coordonnées de $P$ pour trouver où $P$ se situe par rapport à celle-ci.\\
 Si $P$ est à droite (\emph{resp.} gauche) de $root$ \emph{i.e.} $res>0$ (\emph{resp.} $res<0$), on\\
 rappelle la fonction sur l'arbre de droite (\emph{resp.} gauche).\\
-Si $P$ fait parti d'un segment contenu dans $root$ \emph{i.e.} $res=0$, alors $root$ est ajouté à\\
+Si $P$ fait partie d'un segment contenu dans $root$ \emph{i.e.} $res=0$, alors $root$ est ajouté à\\
 la liste de retour et on rappelle la fonction sur les deux fils de $root$.}\\
 \end{tabular}}}\\
 &&\\
@@ -168,7 +168,7 @@ la liste de retour et on rappelle la fonction sur les deux fils de $root$.}\\
 &&par $root$ et $S$ qui contient le segment ($root$ est une feuille) ou les segments\\
 &&($root$ est un noeud) contenus dans $root$, sous la forme de deux points\\
 && par segments (s'il y en a plusieurs, ils seront contenus dans une liste chainée).\\
-&&$root+$ représente le sous-arbre au dessus de $root.d$, et\\
+&&$root+$ représente le sous-arbre au-dessus de $root.d$, et\\
 &&$root-$ représente le sous-arbre en dessous de $root.d$ .\\
 &$P$ :&Point que l'on recherche, de coordonnées ($P.x$,$P.y$).\\
 &$return[]$ :&Liste des segments (paires de points) contenant le point recherché.\\
@@ -207,15 +207,15 @@ la liste de retour et on rappelle la fonction sur les deux fils de $root$.}\\
 \begin{tabular}{lrl}
 \multicolumn{3}{l}{Réduit un ensemble de segments pour ne garder que ceux qui ont un coefficient angulaire donné.}\\
 &&\\
-\textbf{Entrées} : &$S[]$ : &Ensemble de segments à réduire.\\
-& $d$ : &Entier (ou valeur sentinelle $+\infty$), coeficient angulaire du segment recherché.\\
+\textbf{Entrées} : &$S[]$ : &Liste de segments à réduire.\\
+& $d$ : &Entier (ou valeur sentinelle $+\infty$), coefficient angulaire du segment recherché.\\
 \textbf{Sorties} :& &/\\
 \textbf{Effets} :& &La liste $S[]$ ne contient plus que les segments qui ont un coefficient angulaire $d$.
 \end{tabular}
 \begin{algorithmic}[1]
 \Procedure{reduire}{$S[],d$}
-\ForAll{elements $s$ de $S[]$}
-\State $sd\gets$\Call{coeficientAngulaire}{$s.x,s.y$}
+\ForAll{éléments $s$ de $S[]$}
+\State $sd\gets$\Call{coefficientAngulaire}{$s.x,s.y$}
 \If{$sd\neq d$}
 \State retirer $s$ de $S[]$
 \EndIf
@@ -235,15 +235,15 @@ Dans l'étude de la complexité de nos algorithmes, nous allons nommer :
 \subsubsection{Algorithme coefficientAngulaire}
 Dans le pire des cas comme dans un cas moyen, l'appel à cet algorithme se fait en $O(1)$.
 \subsubsection{Algorithme reduire}
-Dans le pire des cas, $S[]$ contient tous les segments de la scéne. Ce cas n'est envisageable dans notre procédure que lorsque tous les segments de la scène ont une extrêmité en commun. Il s'agira alors d'une complexité en $O(s)$ (on suppose que l'on retire les segments de la liste par index, donc en $O(1)$).\\[.5cm]
-Dans le cas moyen par contre, $S[]$ ne contiendra que quelques segments. Le corp de la boucle ne contenant que des instructions en $O(1)$, l'algorithme aura pour complexité $O($nombre de segments dans $S[])$.\\[.5cm]
+Dans le pire des cas, $S[]$ contient tous les segments de la scène. Ce cas n'est envisageable dans notre procédure que lorsque tous les segments de la scène ont une extrémité en commun. Il s'agira alors d'une complexité en $O(s)$ (on suppose que l'on retire les segments de la liste par index, donc en $O(1)$).\\[.5cm]
+Dans le cas moyen par contre, $S[]$ ne contiendra que quelques segments. Le corps de la boucle ne contenant que des instructions en $O(1)$, l'algorithme aura pour complexité $O($nombre de segments dans $S[])$.\\[.5cm]
 Pour la suite de la discussion, nous considérerons une complexité de $O(s)$ pour cet algorithme. Nous considérerons aussi que, dans le pire des cas, la liste $S[]$ contiendra, après application de la fonction, $s$ segments, contre $1$ dans un cas moyen.
 \subsubsection{Algorithme localiser}
-Chaque appel récursif de cet algorithme "descend" d'un noeud dans l'arbre. La condition d'arrêt est que l'on atteint une ou plusieurs feuilles. Les instructions autres que les appels à la fonctions étant en $O(1)$ (affectation, ajout d'un élément à une liste) et que l'on considère (lignes $13$:$17$) que $root.S$ contient dans le pire des cas tous les segments de la scène, et dans un cas moyen un segment, on aura, dans le pire des cas une complexité en $O(h+s)$, et dans un cas moyen $O(h)$.\\[.5cm]
+Chaque appel récursif de cet algorithme "descend" d'un noeud dans l'arbre. La condition d'arrêt est que l'on atteigne une ou plusieurs feuilles. Les instructions autres que les appels à la fonction étant en $O(1)$ (affectation, ajout d'un élément à une liste) et que l'on considère (lignes $13$:$17$) que $root.S$ contient dans le pire des cas tous les segments de la scène, et dans un cas moyen un seul segment. On aura, dans le pire des cas une complexité en $O(h+s)$, et dans un cas moyen $O(h)$.\\[.5cm]
 \emph{Note : }il est possible qu'une récursion appelle deux fois la fonction (\emph{cf} lignes $18$:$19$, mais cela est négligeable car $O(2h)\in O(h)$.
 \subsubsection{Algorithme rechercher}
-Dans le pire des cas, le segment recherché traverse tout l'arbre BSP. On aura donc un nombre d'appel récursifs égal au nombre $l$ de feuilles de l'arbre. On a donc une complexité de $O(h+s+s$ (lignes $3$:$4$) $+ l\cdot s$ (lignes $7$:$18$ si $S[]$ contient tous les segments de la scène)$)$. Donc $O(h+s+l\cdot s)$.\\[.5cm]
+Dans le pire des cas, le segment recherché traverse tout l'arbre BSP. On aura donc un nombre d'appels récursifs égal au nombre $l$ de feuilles de l'arbre. On a donc une complexité de $O(h+s+s$ (lignes $3$:$4$) $+ l\cdot s$ (lignes $7$:$18$ si $S[]$ contient tous les segments de la scène)$)$. Donc $O(h+s+l\cdot s)$.\\[.5cm]
 Dans un cas moyen la complexité sera $O(h+s+l)$ par les considérations précédentes.
 \subsubsection{Algorithme belongsToScene}
-Nous avons donc au final, un algorithme ayant comme complexité dans le pire des cas $O(1+h+s+s\cdot l)$ donc $O(h+s+s\cdot l)$ et dans un cas moyen $O(1+h+s+l)$ donc $O(h+s+l)$.
+Nous avons donc, au final, un algorithme ayant comme complexité dans le pire des cas $O(1+h+s+s\cdot l)$ donc $O(h+s+s\cdot l)$ et dans un cas moyen $O(1+h+s+l)$ donc $O(h+s+l)$.
 \end{document}
