@@ -1,11 +1,62 @@
 import java.util.*;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 class BSP{
 	Node root;
 
+	private int x_bound;
+	private int y_bound;
+	private int n_segments;
+
 	public BSP(String path){
-		//TODO
+		ArrayList<String[]> segments = openBSPFile(path);
+	}
+
+	public int getXBound(){
+		return x_bound;
+	}
+
+	public int getYBound(){
+		return y_bound;
+	}
+
+	public int getNSegments(){
+		return n_segments;
+	}
+
+	/**
+	* Reads a Scene file and initialize x_bound, y_bound and n_segments before returning the segments
+	*/
+	private ArrayList<String[]> openBSPFile(String path){
+		ArrayList<String[]> segments = new ArrayList<String[]>();
+
+		try{
+			BufferedReader reader = new BufferedReader(new FileReader(path));
+			String line;
+			boolean first_line=true;
+			while((line=reader.readLine())!=null){
+				String[] words = line.split(" ");
+				if(first_line){
+					x_bound=Integer.parseInt(words[1]); // skip useless first ">" char
+					y_bound=Integer.parseInt(words[2]);
+					n_segments=Integer.parseInt(words[3]);
+					first_line=false;
+				}
+				else{
+					segments.add(line.split(" "));
+				}
+				
+			}
+
+		} catch(IOException ioe){
+			throw new RuntimeException(ioe);
+		}
+
+		return segments;
+		
 	}
 
 	class Node{
