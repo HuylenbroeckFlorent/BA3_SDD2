@@ -32,6 +32,10 @@ class BSP{
 	private int y_bound;
 	private int n_segments;
 
+	/**
+	* @param path 		String, path to the Scene2D file.
+	* @param heuristic 	int, type of heuristic to use, see class variables.
+	*/
 	public BSP(String path, int heuristic)
 	throws IllegalHeuristicException{
 		ArrayList<String[]> segments = openBSPFile(path);
@@ -61,6 +65,8 @@ class BSP{
 
 	/**
 	* Returns the root of the BSP.
+	*
+	* @return 	Node, root of the BSP.
 	*/
 	public Node getRoot(){
 		return root;
@@ -68,6 +74,8 @@ class BSP{
 
 	/**
 	* Returns the bound for the x axis. Every value is contained in [-x_bound;x_bound].
+	*
+	* @return int, bound for the x axis of the scene.
 	*/
 	public int getXBound(){
 		return x_bound;
@@ -75,6 +83,8 @@ class BSP{
 
 	/**
 	* Returns the bound for the y axis. Every value is contained in [-y_bound;y_bound].
+	*
+	* @return int, bound for the y axis of the scene.
 	*/
 	public int getYBound(){
 		return y_bound;
@@ -82,6 +92,8 @@ class BSP{
 
 	/**
 	* Returns the number of segment contained in the BSP.
+	*
+	* @return int, number of segments contained in the scene.
 	*/
 	public int getNSegments(){
 		return n_segments;
@@ -89,6 +101,9 @@ class BSP{
 
 	/**
 	* Reads a Scene file and initialize x_bound, y_bound and n_segments before returning the segments.
+	*
+	* @param path 	String, path to the Scene2D file.
+	* @return 		ArrayList<String[]> containing all the segment as they are described in the Scene2D file, as Strings.
 	*/
 	private ArrayList<String[]> openBSPFile(String path){
 		ArrayList<String[]> segments = new ArrayList<String[]>();
@@ -100,7 +115,7 @@ class BSP{
 			while((line=reader.readLine())!=null){
 				String[] words = line.split(" ");
 				if(first_line){
-					x_bound=Integer.parseInt(words[1]); // skip useless first ">" char
+					x_bound=Integer.parseInt(words[1]); // skips useless first ">" char
 					y_bound=Integer.parseInt(words[2]);
 					n_segments=Integer.parseInt(words[3]);
 					first_line=false;
@@ -152,6 +167,8 @@ class BSP{
 
 		/**
 		* Returns the left son of the Node.
+		*
+		* @return 	Node, left son.
 		*/
 		public Node getLeft(){
 			return left;
@@ -168,6 +185,8 @@ class BSP{
 
 		/**
 		* Returns the right son of the Node.
+		*
+		* @return 	Node, right son.
 		*/
 		public Node getRight(){
 			return right;
@@ -184,6 +203,8 @@ class BSP{
 
 		/**
 		* Returns an iterator for the LinkedList of the segments contained in the Node.
+		*
+		* @return 	Iterator for the segment list.
 		*/
 		public Iterator getSegments(){
 			return data.iterator();
@@ -206,7 +227,9 @@ class BSP{
 		}
 
 		/**
-		* Returns the number of segment contianed in a Node.
+		* Returns the number of segment contained in a Node.
+		*
+		* @return 	int, number of segments.
 		*/
 		public int getSize(){
 			return data.size();
@@ -214,6 +237,8 @@ class BSP{
 
 		/**
 		* Tells if the Node is a leaf or an inner Node.
+		*
+		* @return 	Boolean, true if the Node is a Leaf.
 		*/
 		public boolean isLeaf(){
 			return(left.equals(null) && right.equals(null));
@@ -242,6 +267,13 @@ class BSP{
 		private Point2D.Float p1, p2;
 		private Color color;
 
+		/**
+		* @param x1 	float, x coordinate for the first extremity of the Segment.
+		* @param y1 	float, y coordinate for the first extremity of the Segment.
+		* @param x2 	float, x coordinate for the second extremity of the Segment.
+		* @param y2 	float, y coordinate for the second extremity of the Segment.
+		* @param color 	Color of the Segment.
+		*/
 		public Segment(float x1, float y1, float x2, float y2, Color color){
 			p1=new Point2D.Float(x1, y1);
 			p2=new Point2D.Float(x2, y2);
@@ -250,6 +282,8 @@ class BSP{
 
 		/**
 		* Returns the coordinates of the first extremity of the semgent.
+		*
+		* @return 	Point2D.Float first extremity of the segment.
 		*/
 		public Point2D.Float getP1(){
 			return p1;
@@ -257,6 +291,9 @@ class BSP{
 
 		/**
 		* Sets the coordinates for the first extremity of the segment.
+		*
+		* @param x1 	float, x coordinate for the first extremity of the Segment.
+		* @param y1 	float, y coordinate for the first extremity of the Segment.
 		*/
 		public void setP1(float x1, float y1)
 		throws OutOfSceneException{
@@ -268,6 +305,8 @@ class BSP{
 
 		/**
 		* Returns the coordinates of the second extremity of the semgent.
+		*
+		* @return 	Point2D.Float second extremity of the segment.
 		*/
 		public Point2D.Float getP2(){
 			return p2;
@@ -275,6 +314,9 @@ class BSP{
 
 		/**
 		* Sets the coordinates for the second extremity of the segment.
+		*
+		* @param x2 	float, x coordinate for the second extremity of the Segment.
+		* @param y2 	float, y coordinate for the second extremity of the Segment.
 		*/
 		public void setP2(float x2, float y2)
 		throws OutOfSceneException{
@@ -286,6 +328,8 @@ class BSP{
 
 		/**
 		* Returns the color fo the segment.
+		*
+		* @return 	Color of the Segment.
 		*/
 		public Color getColor(){
 			return color;
@@ -293,6 +337,8 @@ class BSP{
 
 		/**
 		* Sets the color of the segment.
+		*
+		* @param color 	Color to set.
 		*/
 		public void setColor(Color color){
 			this.color=color;
