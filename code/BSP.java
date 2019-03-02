@@ -125,23 +125,29 @@ class BSP{
 	* @author HUYLENBROECK Florent
 	*/
 	class Node{
-		private LinkedList<Segment> segments;
+		private LinkedList<Segment> data;
 		private Node left;
 		private Node right;
+		private float m, p;
 
 		public Node(){
-			segments=new LinkedList<Segment>();
+			data=new LinkedList<Segment>();
 		}
 
-		public Node(Segment segment){
+		/**
+		* @param segment 	Segment to initialize the Node with.
+		* @param left 		Node, left son.
+		* @param right 		Node, right son.
+		* @param m 			float, slope of the 2D line that the Node describes.
+		* @param p 			float, intercept of the 2D line that the Node describes.
+		*/
+		public Node(Segment segment, Node left, Node right, float m, float p){
 			this();
-			segments.add(segment);
-		}
-
-		public Node(Segment segment, Node left, Node right){
-			this(segment);
+			addSegment(segment);
 			this.left=left;
 			this.right=right;
+			this.m=m;
+			this.p=p;
 		}
 
 		/**
@@ -153,6 +159,8 @@ class BSP{
 
 		/**
 		* Sets the left son of the Node.
+		*
+		* @param left 	Node to set as the left son.
 		*/
 		public void setLeft(Node left){
 			this.left=left;
@@ -167,6 +175,8 @@ class BSP{
 
 		/**
 		* Sets the right son of the Node.
+		*
+		* @param right 	Node to set as the right son.
 		*/ 
 		public void setRight(Node right){
 			this.right=right;
@@ -176,28 +186,30 @@ class BSP{
 		* Returns an iterator for the LinkedList of the segments contained in the Node.
 		*/
 		public Iterator getSegments(){
-			return segments.iterator();
+			return data.iterator();
 		}
 
 		/**
 		* Adds a segment to a Node.
+		*
+		* @param segment 
 		*/
 		public void addSegment(Segment segment){
-			segments.add(segment);
+			data.add(segment);
 		}
 
 		/**
 		* Clears all the segments contained in a Node.
 		*/
 		public void clearSegments(){
-			segments=new LinkedList<Segment>();
+			data=new LinkedList<Segment>();
 		}
 
 		/**
 		* Returns the number of segment contianed in a Node.
 		*/
 		public int getSize(){
-			return segments.size();
+			return data.size();
 		}
 
 		/**
@@ -205,6 +217,19 @@ class BSP{
 		*/
 		public boolean isLeaf(){
 			return(left.equals(null) && right.equals(null));
+		}
+	}
+
+	/**
+	* Represents a leaf of the BSP ree, thus does not contain a line equation, left or right son, nor multiple data.
+	*/
+	class Leaf extends Node{
+
+		/**
+		* @param segment 	Segment that the Leaf contains.
+		*/
+		public Leaf(Segment segment){
+			super(segment, null, null, null, null);
 		}
 	}
 
