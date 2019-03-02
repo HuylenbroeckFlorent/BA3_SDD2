@@ -166,6 +166,45 @@ class BSP{
 		}
 
 		/**
+		* @param segments 	ArrayList<Segment> to initialize the Node with.
+		* @param left 		Node, left son.
+		* @param right 		Node, right son.
+		* @param m 			float, slope of the 2D line that the Node describes.
+		* @param p 			float, intercept of the 2D line that the Node describes.
+		*/
+		public Node(ArrayList<Segment> segments, Node left, Node right, float m, float p){
+			this();
+			for(Segment segment : segments){
+				addSegment(segment);
+			}
+			this.left=left;
+			this.right=right;
+			this.m=m;
+			this.p=p;
+		}
+
+		/**
+		* @param leaf 		Node (Leaf) to convert into inner Node.
+		* @param left 		Node, left son.
+		* @param right 		Node, right son.
+		* @param m 			float, slope of the 2D line that the Node describes.
+		* @param p 			float, intercept of the 2D line that the Node describes.
+		*/
+		public Node(Node leaf, Node left, Node right, float m, float p){
+			this();
+			Iterator leafIter = leaf.getSegments();
+			while(leafIter.hasNext()){
+				addSegment((Segment)leafIter.next());
+			}
+			this.left=left;
+			this.right=right;
+			this.m=m;
+			this.p=p;
+		}
+
+
+
+		/**
 		* Returns the left son of the Node.
 		*
 		* @return 	Node, left son.
@@ -256,6 +295,21 @@ class BSP{
 		public Leaf(Segment segment){
 			super(segment, null, null, null, null);
 		}
+
+		/**
+		* Adds a segment to a Leaf.
+		*
+		* @param segment 
+		*/
+		public void addSegment(Segment segment)
+		throws LeafException{
+			if(getSize()>1)
+				throw new LeafException("Leaf cannot contain more than one segment.");
+			else
+				data.add(segment);
+		}
+
+
 	}
 
 	/**
@@ -346,23 +400,45 @@ class BSP{
 	}
 
 	/**
-	* Exception class for when an Illegal heuristic argument is passed to BSP constructor.
+	* Mother class for all BSP-related Exceptions
 	*
 	* @author HUYLENBROECK Florent
 	*/
-	public class IllegalHeuristicException extends Exception{
+	public class BSPException extends Exception{
+		public BSPException(String message){
+			super(message);
+		}
+	}
+
+	/**
+	* BSPException class for when an Illegal heuristic argument is passed to BSP constructor.
+	*
+	* @author HUYLENBROECK Florent
+	*/
+	public class IllegalHeuristicException extends BSPException{
 		public IllegalHeuristicException(String message){
 			super(message);
 		}
 	}
 
 	/**
-	* Exception class for when a point is trying to be set ouf of the scene bound's
+	* BSPException class for when a point is trying to be set ouf of the scene bound's
 	*
 	* @author HUYLENBROECK Florent
 	*/
-	public class OutOfSceneException extends Exception{
+	public class OutOfSceneException extends BSPException{
 		public OutOfSceneException(String message){
+			super(message);
+		}
+	}
+
+	/**
+	* BSPException class for everything that leaves are restrained to.
+	*
+	* @author HUYLENBROECK Florent
+	*/
+	public class LeafException extends BSPException{
+		public LeafException(String message){
 			super(message);
 		}
 	}
