@@ -111,7 +111,7 @@ class BSP{
 		try{
 			BufferedReader reader = new BufferedReader(new FileReader(path));
 			String line;
-			boolean first_line=true;
+			Boolean first_line=true;
 			while((line=reader.readLine())!=null){
 				String[] words = line.split(" ");
 				if(first_line){
@@ -192,7 +192,7 @@ class BSP{
 		*/
 		public Node(Node leaf, Node left, Node right, float m, float p){
 			this();
-			Iterator leafIter = leaf.getSegments();
+			Iterator leafIter = leaf.getData();
 			while(leafIter.hasNext()){
 				addSegment((Segment)leafIter.next());
 			}
@@ -245,17 +245,19 @@ class BSP{
 		*
 		* @return 	Iterator for the segment list.
 		*/
-		public Iterator getSegments(){
+		public Iterator getData(){
 			return data.iterator();
 		}
 
 		/**
 		* Adds a segment to a Node.
 		*
-		* @param segment 
+		* @param segment  	Segment to add.
+		* @return 	Boolean, true if the Segment has been added successfuly (useful in Leaf sub-class)
 		*/
-		public void addSegment(Segment segment){
+		public Boolean addSegment(Segment segment){
 			data.add(segment);
+			return true;
 		}
 
 		/**
@@ -279,13 +281,13 @@ class BSP{
 		*
 		* @return 	Boolean, true if the Node is a Leaf.
 		*/
-		public boolean isLeaf(){
+		public Boolean isLeaf(){
 			return(left.equals(null) && right.equals(null));
 		}
 	}
 
 	/**
-	* Represents a leaf of the BSP ree, thus does not contain a line equation, left or right son, nor multiple data.
+	* Represents a leaf of the BSP tree, thus does not contain a line equation, left or right son, nor multiple data.
 	*/
 	class Leaf extends Node{
 
@@ -293,23 +295,22 @@ class BSP{
 		* @param segment 	Segment that the Leaf contains.
 		*/
 		public Leaf(Segment segment){
-			super(segment, null, null, null, null);
+			super(segment, null, null, 0.f, 0.f);
 		}
 
 		/**
-		* Adds a segment to a Leaf.
+		* Adds a segment to the Leaf.
 		*
 		* @param segment 
 		*/
-		public void addSegment(Segment segment)
-		throws LeafException{
-			if(getSize()>1)
-				throw new LeafException("Leaf cannot contain more than one segment.");
+		public Boolean addSegment(Segment segment){
+			if(this.getSize()<1){
+				this.addSegment(segment);
+				return true;
+			}
 			else
-				data.add(segment);
+				return false;
 		}
-
-
 	}
 
 	/**
@@ -400,7 +401,7 @@ class BSP{
 	}
 
 	/**
-	* Mother class for all BSP-related Exceptions
+	* Parent class for all BSP-related Exceptions
 	*
 	* @author HUYLENBROECK Florent
 	*/
@@ -422,23 +423,12 @@ class BSP{
 	}
 
 	/**
-	* BSPException class for when a point is trying to be set ouf of the scene bound's
+	* BSPException class for when a point is trying to be set ouf of the scene bound's.
 	*
 	* @author HUYLENBROECK Florent
 	*/
 	public class OutOfSceneException extends BSPException{
 		public OutOfSceneException(String message){
-			super(message);
-		}
-	}
-
-	/**
-	* BSPException class for everything that leaves are restrained to.
-	*
-	* @author HUYLENBROECK Florent
-	*/
-	public class LeafException extends BSPException{
-		public LeafException(String message){
 			super(message);
 		}
 	}
