@@ -12,7 +12,7 @@ import java.io.IOException;
 *
 * @author HUYLENBROECK Florent, DACHY Corentin
 */
-class BSP{
+public class BSP{
 	private Node root;
 	private String path;
 
@@ -150,7 +150,7 @@ class BSP{
 	*
 	* @author HUYLENBROECK Florent
 	*/
-	class Node{
+	public class Node{
 		private LinkedList<Segment> data;
 		private Node left;
 		private Node right;
@@ -300,7 +300,7 @@ class BSP{
 	/**
 	* Represents a leaf of the BSP tree, thus does not contain a line equation, left or right son, nor multiple data.
 	*/
-	class Leaf extends Node{
+	public class Leaf extends Node{
 
 		/**
 		* @param segment 	Segment that the Leaf contains.
@@ -329,7 +329,7 @@ class BSP{
 	*
 	* @author HUYLENBROECK Florent
 	*/
-	class Segment{
+	public class Segment{
 		private Point2D.Float p1, p2;
 		private Color color;
 

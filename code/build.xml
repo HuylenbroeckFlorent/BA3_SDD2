@@ -1,6 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <project name="SDD2" basedir=".">
 	<property name="src" value="src/"/>
 	<property name="build" value="build/"/>
+	<property name="doc" value='doc/'/>
 
 	<target name="build">
 		<mkdir dir="${build}"/>
@@ -8,9 +11,18 @@
 		</javac>
 	</target>
 
+	<target name="doc">
+		<mkdir dir="${doc}"/>
+		<javadoc destdir="${doc}" author="true" version="true" windowtitle="SDD2">
+			<fileset dir="${src}"/>
+		</javadoc>
+	</target>
+
+
 	<target name="clean">
 		<delete includeEmptyDirs="true">
 			<fileset dir="${build}" includes="**/*"/>
+			<fileset dir="${doc}"/>
 		</delete>
 	</target>
 
