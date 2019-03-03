@@ -14,6 +14,7 @@ import java.io.IOException;
 */
 class BSP{
 	private Node root;
+	private String path;
 
 	/**
 	* Random heuristic constant.
@@ -26,7 +27,7 @@ class BSP{
 	/**
 	* Free splits heuristic constant.
 	*/
-	public static final int FREE_SPLITS = 2; 
+	public static final int FREE_SPLITS = 2;
 
 	private int x_bound;
 	private int y_bound;
@@ -38,6 +39,7 @@ class BSP{
 	*/
 	public BSP(String path, int heuristic)
 	throws IllegalHeuristicException{
+		this.path=path;
 		ArrayList<String[]> segments = openBSPFile(path);
 
 		switch(heuristic){
@@ -97,6 +99,15 @@ class BSP{
 	*/
 	public int getNSegments(){
 		return n_segments;
+	}
+
+	/**
+	* Returns the path to the Scene2D file.
+	*
+	* @return 	String, the path to SCene 2D file.
+	*/
+	public String getPath(){
+		return path;
 	}
 
 	/**
