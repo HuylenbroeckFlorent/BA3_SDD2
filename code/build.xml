@@ -1,0 +1,16 @@
+<project name="SDD2" basedir=".">
+	<property name="src" value="src/"/>
+	<property name="build" value="build/"/>
+
+	<target name="build">
+		<javac srcdir="${src}" destdir="${build}">
+		</javac>
+	</target>
+
+	<target name="clean">
+		<delete includeEmptyDirs="true">
+			<fileset dir="${build}" includes="**/*"/>
+		</delete>
+	</target>
+
+</project>
