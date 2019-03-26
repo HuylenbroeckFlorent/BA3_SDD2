@@ -40,7 +40,7 @@ public class BSP{
 	public BSP(String path, int heuristic)
 	throws IllegalHeuristicException{
 		this.path=path;
-		ArrayList<String[]> segments = openBSPFile(path);
+		ArrayList<Segment> segments = openBSPFile(path);
 
 		switch(heuristic){
 			case 0: randomHeuristicBSP(segments);
@@ -53,15 +53,15 @@ public class BSP{
 		}
 	}
 
-	private void randomHeuristicBSP(ArrayList<String[]> segments){
+	private void randomHeuristicBSP(ArrayList<Segment> segments){
 
 	}
 
-	private void orderedHeuristicBSP(ArrayList<String[]> segments){
+	private void orderedHeuristicBSP(ArrayList<Segment> segments){
 
 	}
 
-	private void freeSplitsHeuristicBSP(ArrayList<String[]> segments){
+	private void freeSplitsHeuristicBSP(ArrayList<Segment> segments){
 
 	}
 
@@ -116,8 +116,8 @@ public class BSP{
 	* @param path 	String, path to the Scene2D file.
 	* @return 		ArrayList<String[]> containing all the segment as they are described in the Scene2D file, as Strings.
 	*/
-	private ArrayList<String[]> openBSPFile(String path){
-		ArrayList<String[]> segments = new ArrayList<String[]>();
+	private ArrayList<Segment> openBSPFile(String path){
+		ArrayList<Segment> segments = new ArrayList<Segment>();
 
 		try{
 			BufferedReader reader = new BufferedReader(new FileReader(path));
@@ -132,7 +132,7 @@ public class BSP{
 					first_line=false;
 				}
 				else{
-					segments.add(line.split(" "));
+					segments.add(new Segment(line.split(" ")));
 				}
 				
 			}
@@ -151,6 +151,11 @@ public class BSP{
 	* @author HUYLENBROECK Florent
 	*/
 	public class Node{
+		/**
+		* Sentinel value for slope.
+		*/
+		public static final float INF = (float)Float.MAX_VALUE; //TODO in degree.
+
 		private LinkedList<Segment> data;
 		private Node left;
 		private Node right;
@@ -344,6 +349,34 @@ public class BSP{
 			p1=new Point2D.Float(x1, y1);
 			p2=new Point2D.Float(x2, y2);
 			this.color=color;
+		}
+
+		public Segment(String[] fromFile){
+			p1=new Point2D.Float(Float.parseFloat(fromFile[0]),Float.parseFloat(fromFile[1]));
+			p2=new Point2D.Float(Float.parseFloat(fromFile[2]),Float.parseFloat(fromFile[3]));
+			switch(fromFile[4]){
+				case "Bleu": color=Color.BLUE;
+				break;
+				case "Rouge": color=Color.RED;
+				break;
+				case "Orange": color=Color.ORANGE;
+				break;
+				case "Jaune": color=Color.YELLOW;
+				break;
+				case "Noir": color=Color.BLACK;
+				break;
+				case "Violet": color=Color.MAGENTA;
+				break;
+				case "Marron": color=Color.DARK_GRAY;
+				break;
+				case "Vert": color=Color.GREEN;
+				break;
+				case "Gris": color=Color.LIGHT_GRAY;
+				break;
+				case "Rose": color=Color.PINK;
+				break;
+				default: color=Color.WHITE;
+			}
 		}
 
 		/**
