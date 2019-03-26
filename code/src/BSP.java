@@ -33,28 +33,58 @@ public class BSP{
 	private int y_bound;
 	private int n_segments;
 
+	private Random rd = new Random();
+
+	/**
+	* Sentinel value for slope.
+	*/
+	public static final float INF = (float)Float.MAX_VALUE;
+
 	/**
 	* @param path 		String, path to the Scene2D file.
 	* @param heuristic 	int, type of heuristic to use, see class variables.
 	*/
-	public BSP(String path, int heuristic)
-	throws IllegalHeuristicException{
+	public BSP(String path, int heuristic){
 		this.path=path;
 		ArrayList<Segment> segments = openBSPFile(path);
 
+		root = new Node();
+
 		switch(heuristic){
-			case 0: randomHeuristicBSP(segments);
-			break;
 			case 1: orderedHeuristicBSP(segments);
 			break;
 			case 2: freeSplitsHeuristicBSP(segments);
 			break;
-			default: throw new IllegalHeuristicException("That heuristic doesn't exist");
+			case 0:
+			default: randomHeuristicBSP(root, segments);;
 		}
 	}
 
-	private void randomHeuristicBSP(ArrayList<Segment> segments){
+	private void randomHeuristicBSP(Node root, ArrayList<Segment> segments){
+		int split = rd.nextInt(segments.size());
+		Segment segment = segments.get(split);
+		root.addSegment(segments.get(split));
+		segments.remove(split);
+		root.setM(slope(segment));
+		root.setP(intercept(segment));
 
+		ArrayList<Segment> left = new ArrayList<Segment>();
+		ArrayList<Segment> right = new ArrayList<Segment>();
+
+		split(root.getM(), root.getP(), segments, left, right);
+
+		root.addSegment(segments);
+
+		if(left.size()>0){
+			Node leftSon = new Node();
+			randomHeuristicBSP(leftSon, left);
+			root.setLeft(leftSon);
+		}
+		if(right.size()>0){
+			Node rightSon = new Node();
+			randomHeuristicBSP(rightSon, right);
+			root.setLeft(rightSon);
+		}
 	}
 
 	private void orderedHeuristicBSP(ArrayList<Segment> segments){
@@ -145,16 +175,90 @@ public class BSP{
 		
 	}
 
+	private float slope(Segment segment){
+		if(segment.getP1().getX()-segment.getP2().getX() == 0.f)
+			return INF;
+		else
+			return (float)((segment.getP1().getY()-segment.getP2().getY())/(segment.getP1().getX()-segment.getP2().getX()));
+	}
+
+	private float intercept(Segment segment){
+		float slope = slope(segment);
+		if(slope == INF)
+			return (float)segment.getP1().getX();
+		else
+			return (float)(segment.getP1().getY()-slope*segment.getP1().getX());
+	}
+
+	/**
+	* Splits an ArrayList of Segment into two ArrayLists of Segment given a split line y = mx+p.
+	* Segments above that line are added to right ArrayList.
+	* Segments under that line are added to left ArrayList.
+	* Segments included in that line are left in the ArrayList
+	* Segments that are intersecting the line are split and each half is processed individually.
+	*/
+	private void split(float m, float p, ArrayList<Segment> segments, ArrayList<Segment> left, ArrayList<Segment> right){
+		if(m==INF){
+			for(Segment segment : segments){
+				float a = (float)segment.getP1().getX();
+				float b = (float)segment.getP2().getX();
+
+				if(a==p && b==p)
+					continue;
+				else if(a>=p && b>=p)
+					left.add(segment);
+				else if(a<=p && b<=p)
+					right.add(segment);
+				else{
+					float intersectionY = slope(segment)*p+intercept(segment);
+					Point2D.Float intersect = new Point2D.Float(p, intersectionY);
+					segments.add(new Segment(segment.getP1(), intersect, segment.getColor()));
+					segments.add(new Segment(segment.getP2(), intersect, segment.getColor()));
+				}
+				segments.remove(segment);
+			}
+		}
+		else{	
+			for(Segment segment : segments){
+				float a = (float)(m*segment.getP1().getX()-p-segment.getP1().getY());
+				float b = (float)(m*segment.getP2().getX()-p-segment.getP2().getY());
+
+				if(a==0.f && b==0.f)
+					continue;
+				else if (a>=0.f && b>=0.f)
+					left.add(segment);
+				else if (a<=0.f && b<=0.f)
+					right.add(segment);
+				else{
+					Point2D.Float intersect = intersection(segment, m, p);
+					segments.add(new Segment(segment.getP1(), intersect, segment.getColor()));
+					segments.add(new Segment(segment.getP2(), intersect, segment.getColor()));
+				}
+				segments.remove(segment);
+			}
+		}
+	}
+
+	private Point2D.Float intersection(Segment segment, Float m, Float p){
+		float m2 = slope(segment);
+		float p2 = intercept(segment);
+
+		if(m2==INF)
+			return new Point2D.Float((float)segment.getP1().getX(), m*p2+p);
+		else{
+			float intersectionX = (p2-p)/(m-m2);
+			float intersectionY = m*intersectionX+p;
+
+			return new Point2D.Float(intersectionX, intersectionY);
+		}
+	}
+
 	/**
 	* Represents a node of the BSP tree
 	*
 	* @author HUYLENBROECK Florent
 	*/
 	public class Node{
-		/**
-		* Sentinel value for slope.
-		*/
-		public static final float INF = (float)Float.MAX_VALUE; //TODO in degree.
 
 		private LinkedList<Segment> data;
 		private Node left;
@@ -163,6 +267,11 @@ public class BSP{
 
 		public Node(){
 			data=new LinkedList<Segment>();
+		}
+
+		public Node(Segment split){
+			this();
+			addSegment(split);
 		}
 
 		/**
@@ -276,6 +385,13 @@ public class BSP{
 			return true;
 		}
 
+		public Boolean addSegment(ArrayList<Segment> segments){
+			for(Segment segment : segments){
+				data.add(segment);
+			}
+			return true;
+		}
+
 		/**
 		* Clears all the segments contained in a Node.
 		*/
@@ -299,6 +415,22 @@ public class BSP{
 		*/
 		public Boolean isLeaf(){
 			return(left.equals(null) && right.equals(null));
+		}
+		
+		public float getM(){
+			return m;
+		}		
+
+		public void setM(float m){
+			this.m = m;
+		}
+
+		public float getP(){
+			return p;
+		}
+
+		public void setP(float p){
+			this.p = p;
 		}
 	}
 
@@ -351,6 +483,12 @@ public class BSP{
 			this.color=color;
 		}
 
+		public Segment(Point2D.Float p1, Point2D.Float p2, Color color){
+			this.p1 = p1;
+			this.p2 = p2;
+			this.color = color;
+		}
+
 		public Segment(String[] fromFile){
 			p1=new Point2D.Float(Float.parseFloat(fromFile[0]),Float.parseFloat(fromFile[1]));
 			p2=new Point2D.Float(Float.parseFloat(fromFile[2]),Float.parseFloat(fromFile[3]));
@@ -380,7 +518,7 @@ public class BSP{
 		}
 
 		/**
-		* Returns the coordinates of the first extremity of the semgent.
+		* Returns the coordinates of the first extremity of the segment.
 		*
 		* @return 	Point2D.Float first extremity of the segment.
 		*/
@@ -403,7 +541,7 @@ public class BSP{
 		}
 
 		/**
-		* Returns the coordinates of the second extremity of the semgent.
+		* Returns the coordinates of the second extremity of the segment.
 		*
 		* @return 	Point2D.Float second extremity of the segment.
 		*/
@@ -451,17 +589,6 @@ public class BSP{
 	*/
 	public class BSPException extends Exception{
 		public BSPException(String message){
-			super(message);
-		}
-	}
-
-	/**
-	* BSPException class for when an Illegal heuristic argument is passed to BSP constructor.
-	*
-	* @author HUYLENBROECK Florent
-	*/
-	public class IllegalHeuristicException extends BSPException{
-		public IllegalHeuristicException(String message){
 			super(message);
 		}
 	}
