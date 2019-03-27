@@ -116,6 +116,7 @@ public class Segment{
 	}
 
 	public String toString(){
-		return "Segment extremities : "+p1.toString()+" & "+p2.toString()+" // color : "+color.toString();
+		return "Segment extremities : ("+p1.getX()+" ; "+p1.getY()+") & ("
+										+p2.getX()+" ; "+p2.getY()+") // color : "+color.toString();
 	}
 }

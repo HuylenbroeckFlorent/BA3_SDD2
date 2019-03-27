@@ -62,6 +62,10 @@ public class Node{
 		this.p=p;
 	}
 
+	public Boolean hasLeft(){
+		return left!=null;
+	}
+
 	/**
 	* Returns the left son of the Node.
 	*
@@ -78,6 +82,10 @@ public class Node{
 	*/
 	public void setLeft(Node left){
 		this.left=left;
+	}
+
+	public Boolean hasRight(){
+		return right!=null;
 	}
 
 	/**
