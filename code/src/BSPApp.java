@@ -22,6 +22,7 @@ public class BSPApp{
 	private static final int screenHeight = screenSize.height;
 	private static final int screenWidth = screenSize.width;
 
+	private static String path;
 	private static BSP bsp;
 	private static int heuristic=0;
 
@@ -63,6 +64,7 @@ public class BSPApp{
 		random.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				heuristic=BSP.RANDOM;
+				updateBSP();
 			}
 		});
 		random.setSelected(true);
@@ -72,6 +74,7 @@ public class BSPApp{
 		ordered.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				heuristic=BSP.ORDERED;
+				updateBSP();
 			}
 		});
 		heuristicGroup.add(ordered);
@@ -80,6 +83,7 @@ public class BSPApp{
 		freeSplits.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				heuristic=BSP.FREE_SPLITS;
+				updateBSP();
 			}
 		});
 		heuristicGroup.add(freeSplits);
@@ -179,15 +183,13 @@ public class BSPApp{
 			throw new IllegalStateException(e);
 		}
 
-		String path = "";
-
 		if(action == JFileChooser.APPROVE_OPTION){
 			path = jfc.getSelectedFile().getAbsolutePath();
+			updateBSP();
 		}
-		else{
-			return;
-		}
+	}
 
+	private static void updateBSP(){
 		bsp = new BSP(path, heuristic);
 
 		panel.setBSP(bsp);
