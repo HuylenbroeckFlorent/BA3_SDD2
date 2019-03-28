@@ -190,11 +190,12 @@ public class BSPApp{
 	}
 
 	private static void updateBSP(){
-		bsp = new BSP(path, heuristic);
-
-		panel.setBSP(bsp);
-		//panel.updateUI();
-		panel.revalidate();
-		panel.repaint();
+		if(path!=null){
+			bsp = new BSP(path, heuristic);
+			panel.setBSP(bsp);
+			//panel.updateUI();
+			panel.revalidate();
+			panel.repaint();
+		}
 	}
 }
