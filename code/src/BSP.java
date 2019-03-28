@@ -161,25 +161,30 @@ public class BSP{
 	* @param path 	String, path to the Scene2D file.
 	* @return 		ArrayList<String[]> containing all the segment as they are described in the Scene2D file, as Strings.
 	*/
-	private ArrayList<Segment> openBSPFile(String path){
+	private ArrayList<Segment> openBSPFile(String path)
+	throws NumberFormatException{
 		ArrayList<Segment> segments = new ArrayList<Segment>();
 
 		try{
 			BufferedReader reader = new BufferedReader(new FileReader(path));
 			String line;
 			Boolean first_line=true;
-			while((line=reader.readLine())!=null){
-				String[] words = line.split(" ");
-				if(first_line){
-					x_bound=Integer.parseInt(words[1]); // skips useless first ">" char
-					y_bound=Integer.parseInt(words[2]);
-					n_segments=Integer.parseInt(words[3]);
-					first_line=false;
+			try{
+				while((line=reader.readLine())!=null){
+					String[] words = line.split(" ");
+					if(first_line){
+						x_bound=Integer.parseInt(words[1]); // skips useless first ">" char
+						y_bound=Integer.parseInt(words[2]);
+						n_segments=Integer.parseInt(words[3]);
+						first_line=false;
+					}
+					else{
+						segments.add(new Segment(line.split(" ")));
+					}
+					
 				}
-				else{
-					segments.add(new Segment(line.split(" ")));
-				}
-				
+			} catch(NumberFormatException nfe){
+				throw nfe;
 			}
 
 		} catch(IOException ioe){
