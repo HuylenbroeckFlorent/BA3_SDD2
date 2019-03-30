@@ -13,7 +13,7 @@ public class Node{
 	private LinkedList<Segment> data;
 	private Node left;
 	private Node right;
-	private float m, p;
+	private float a, b, c;
 
 	public Node(){
 		data=new LinkedList<Segment>();
@@ -24,9 +24,10 @@ public class Node{
 		addSegment(segment);
 		left=null;
 		right=null;
-		m=0.f;
-		p=0.f;
+		a=0.f;
+		b=0.f;
 	}
+
 
 	/**
 	* @param segment 	Segment to initialize the Node with.
@@ -35,13 +36,14 @@ public class Node{
 	* @param m 			float, slope of the 2D line that the Node describes.
 	* @param p 			float, intercept of the 2D line that the Node describes.
 	*/
-	public Node(Segment segment, Node left, Node right, float m, float p){
+	public Node(Segment segment, Node left, Node right, float a, float b, float c){
 		this();
 		addSegment(segment);
 		this.left=left;
 		this.right=right;
-		this.m=m;
-		this.p=p;
+		this.a=a;
+		this.b=b;
+		this.c=c;
 	}
 
 	/**
@@ -51,15 +53,16 @@ public class Node{
 	* @param m 			float, slope of the 2D line that the Node describes.
 	* @param p 			float, intercept of the 2D line that the Node describes.
 	*/
-	public Node(ArrayList<Segment> segments, Node left, Node right, float m, float p){
+	public Node(ArrayList<Segment> segments, Node left, Node right, float a, float b, float c){
 		this();
 		for(Segment segment : segments){
 			addSegment(segment);
 		}
 		this.left=left;
 		this.right=right;
-		this.m=m;
-		this.p=p;
+		this.a=a;
+		this.b=b;
+		this.c=c;
 	}
 
 	public Boolean hasLeft(){
@@ -158,20 +161,28 @@ public class Node{
 		return(left==null && right==null);
 	}
 	
-	public float getM(){
-		return m;
+	public float getA(){
+		return a;
 	}		
 
-	public void setM(float m){
-		this.m = m;
+	public void setA(float a){
+		this.a = a;
 	}
 
-	public float getP(){
-		return p;
+	public float getB(){
+		return b;
+	}		
+
+	public void setB(float b){
+		this.b = b;
 	}
 
-	public void setP(float p){
-		this.p = p;
+	public float getC(){
+		return c;
+	}		
+
+	public void setC(float c){
+		this.c = c;
 	}
 
 	public String toString(){
@@ -181,7 +192,7 @@ public class Node{
 			ret = "Leaf";
 		else
 			ret = "Node";
-		ret += " with line at y="+m+"x+"+p+ " contains : \n";
+		ret += " with line at y="+a+"x+"+b+ " contains : \n";
 		for(Iterator i = getData(); i.hasNext();){
 			ret+="\t";
 			ret+=i.next().toString();

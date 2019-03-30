@@ -48,63 +48,59 @@ public class BSP{
 		this.path=path;
 		ArrayList<Segment> segments = openBSPFile(path);
 
-		root = new Node();
-
-		BSPRec(root, segments, heuristic);
+		if(!segments.isEmpty())
+			root = BSPRec(segments, heuristic);
+		else
+			root = new Node();		
 	}
 
-	private void BSPRec(Node root, ArrayList<Segment> segments, int heuristic){
+	private Node BSPRec(ArrayList<Segment> segments, int heuristic){
 
-		if(segments.isEmpty())
-			return;
+		Node node = new Node();
 
-		int split;
-
-		switch(heuristic){
-			case 1: split = 0;
-			break;
-			case 2: split = freeSplit(segments);
-			break;
-			case 0:
-			default: split = rd.nextInt(segments.size());
+		if(segments.size()==0){
+			return node;
 		}
-
-		Segment segment = segments.get(split);
-		root.addSegment(segments.get(split));
-		segments.remove(split);
-		root.setM(slope(segment));
-		root.setP(intercept(segment));
-
-		ArrayList<Segment> left = new ArrayList<Segment>();
-		ArrayList<Segment> right = new ArrayList<Segment>();
-
-		split(root.getM(), root.getP(), segments, left, right);
-
-		root.addSegment(segments);
-
-		if(left.size()==0){
-			root.setLeft(new Node());
-		}
-		else if(left.size()==1){
-			root.setLeft(new Node(left.get(0)));
+		else if(segments.size()==1){
+			node.addSegment(segments);
+			return node;
 		}
 		else{
-			Node leftSon = new Node();
-			BSPRec(leftSon, left, heuristic);
-			root.setLeft(leftSon);
-		}
-		if(right.size()==0){
-			root.setRight(new Node());
-		}
-		else if(right.size()==1){
-			root.setRight(new Node(right.get(0)));
-		}
-		else{
-			Node rightSon = new Node();
-			BSPRec(rightSon, right, heuristic);
-			root.setRight(rightSon);
+
+			int split;
+
+			switch(heuristic){
+				case 1: split = 0;
+				break;
+				case 2: split = freeSplit(segments);
+				break;
+				case 0:
+				default: split = rd.nextInt(segments.size());
+			}
+
+			Segment segment = segments.get(split);
+			node.addSegment(segments.get(split));
+			segments.remove(split);
+
+			node.setA(a(segment));
+			node.setB(b(segment));
+			node.setC(c(segment));
+
+			ArrayList<Segment> left = new ArrayList<Segment>();
+			ArrayList<Segment> right = new ArrayList<Segment>();
+
+			split(node.getA(), node.getB(), node.getC(), segments, left, right);
+
+			node.addSegment(segments);
+
+			node.setLeft(BSPRec(left, heuristic));
+			node.setRight(BSPRec(right, heuristic));
+
+			return node;
 		}
 	}
+
+		
 
 	private int freeSplit(ArrayList<Segment> segments){
 		return 0;
@@ -195,8 +191,20 @@ public class BSP{
 		
 	}
 
+	private float a(Segment segment){
+		return (float)(segment.getP1().getY()-segment.getP2().getY());
+	}
+
+	private float b(Segment segment){
+		return (float)(segment.getP2().getX()-segment.getP1().getX());
+	}
+
+	private float c(Segment segment){
+		return (float)(segment.getP1().getX()*segment.getP2().getY()-segment.getP2().getX()*segment.getP1().getY());
+	}
+
 	private float slope(Segment segment){
-		if(segment.getP1().getX()-segment.getP2().getX() == 0.f)
+		if(segment.getP1().getX()-segment.getP2().getX() == 0f)
 			return INF;
 		else
 			return (float)((segment.getP1().getY()-segment.getP2().getY())/(segment.getP1().getX()-segment.getP2().getX()));
@@ -212,47 +220,38 @@ public class BSP{
 
 	/**
 	* Splits an ArrayList of Segment into two ArrayLists of Segment given a split line y = mx+p.
-	* Segments above that line are added to right ArrayList.
-	* Segments under that line are added to left ArrayList.
-	* Segments included in that line are left in the ArrayList
+	* Segments above that line are added to plus ArrayList.
+	* Segments under that line are added to minus ArrayList.
+	* Segments included in that line are left in the ArrayList segments.
 	* Segments that are intersecting the line are split and each half is processed individually.
 	*/
-	private void split(float m, float p, ArrayList<Segment> segments, ArrayList<Segment> left, ArrayList<Segment> right){
+	private void split(float a, float b, float c, ArrayList<Segment> segments, ArrayList<Segment> minus, ArrayList<Segment> plus){
 		
 		for(int i=0; i<segments.size();){
 
 			Segment segment = segments.get(i);
-			float line, a, b;
 
-			if(m==INF){
-				line = p;
-				a = (float)segment.getP1().getX();
-				b = (float)segment.getP2().getX();
-			}
-			else{
-				line = 0.f;
-				a = (float)(m*segment.getP1().getX()-p-segment.getP1().getY());
-				b = (float)(m*segment.getP2().getX()-p-segment.getP2().getY());
-			}
+			float p1 = (float) (a*segment.getP1().getX()+b*segment.getP1().getY()+c);
+			float p2 = (float) (a*segment.getP2().getX()+b*segment.getP2().getY()+c);
 
-			if(a==line && b==line){
+			if(p1==0f && p2==0f){
 				i++;
 				continue;
 			}
-			else if(a>=line && b>=line)
-				left.add(segment);
-			else if(a<=line && b<=line)
-				right.add(segment);
+			else if(p1>=0f && p2>=0f)
+				plus.add(segment);
+			else if(p1<=0f && p2<=0f)
+				minus.add(segment);
 			else{
-				Point2D.Float intersect = intersection(segment, m, p);
+				Point2D.Float intersect = intersection(segment, a, b, c);
 
-				if(a>=line){
-					left.add(new Segment(segment.getP1(), intersect, segment.getColor()));
-					right.add(new Segment(segment.getP2(), intersect, segment.getColor()));
+				if(p1>=0f){
+					plus.add(new Segment(segment.getP1(), intersect, segment.getColor()));
+					minus.add(new Segment(segment.getP2(), intersect, segment.getColor()));
 				}
 				else{
-					right.add(new Segment(segment.getP1(), intersect, segment.getColor()));
-					left.add(new Segment(segment.getP2(), intersect, segment.getColor()));
+					minus.add(new Segment(segment.getP1(), intersect, segment.getColor()));
+					plus.add(new Segment(segment.getP2(), intersect, segment.getColor()));
 				}
 			}
 
@@ -260,17 +259,11 @@ public class BSP{
 		}
 	}
 
-	private Point2D.Float intersection(Segment segment, Float m, Float p){
-		float m2 = slope(segment);
-		float p2 = intercept(segment);
+	private Point2D.Float intersection(Segment segment, float a, float b, float c){
+		float a2 = a(segment);
+		float b2 = b(segment);
+		float c2 = c(segment);
 
-		if(m2==INF)
-			return new Point2D.Float((float)segment.getP1().getX(), m*p2+p);
-		else{
-			float intersectionX = (p2-p)/(m-m2);
-			float intersectionY = m*intersectionX+p;
-
-			return new Point2D.Float(intersectionX, intersectionY);
-		}
+		return new Point2D.Float((c*b2-c2*b)/(b*a2-b2*a),(a*c2-c*a2)/(b*a2-b2*a));
 	}
 }

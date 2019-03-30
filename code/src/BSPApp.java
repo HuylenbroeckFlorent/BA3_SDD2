@@ -28,10 +28,6 @@ public class BSPApp{
 
 	public static void main(String[] args){
 
-		//whereAreWe();
-
-		//BSP test = new BSP("./../../resources/Scenes/ellipses/ellipsesSmall.txt", BSP.ORDERED);
-
 		JFrame frame = new JFrame();
 
 		frame.setTitle("BSP Viewer - HUYLENBROECK Florent & DACHY Corentin");
@@ -148,7 +144,7 @@ public class BSPApp{
 				int y2 = (int) (zeroY*(seg.getP2().getY())/dimY +zeroY);
 
 				g.setColor(seg.getColor());
-				g.drawLine(x1, y1, x2, y2);
+				g.drawLine(x1, this.getHeight()-y1, x2, this.getHeight()-y2);
 			}
 
 			if(root.hasLeft()){
@@ -192,6 +188,7 @@ public class BSPApp{
 	private static void updateBSP(){
 		if(path!=null){
 			bsp = new BSP(path, heuristic);
+			panel.removeAll();
 			panel.setBSP(bsp);
 			//panel.updateUI();
 			panel.revalidate();
