@@ -43,8 +43,8 @@ public class BSPApp{
 	private static int eyeSize = 10;
 	private static float eyeSpan = 60.0f;
 	private static float eyeOrientation = 0.0f;
-	private static float eyeTheta1 = (float)(eyeOrientation*(Math.PI/180));
-	private static float eyeTheta2 = (float)((eyeOrientation+eyeSpan)*(Math.PI/180));
+	private static float eyeTheta1 = (float)(eyeOrientation*(Math.PI/180.0));
+	private static float eyeTheta2 = (float)((eyeOrientation+eyeSpan)*(Math.PI/180.0));
 
 	public static void main(String[] args){
 
@@ -193,6 +193,8 @@ public class BSPApp{
 
 			if(eyeX!=(int)Integer.MAX_VALUE && eyeY!=(int)Integer.MAX_VALUE){
 				g.setColor(Color.BLACK);
+				g.drawLine(eyeX, eyeY, ((int)(100*Math.cos(eyeTheta1)))+eyeX, ((int)(100*Math.sin(eyeTheta1)))+eyeY);
+				g.drawLine(eyeX, eyeY, ((int)(100*Math.cos(eyeTheta2)))+eyeX, ((int)(100*Math.sin(eyeTheta2)))+eyeY);
 				g.fillOval(eyeX-eyeSize/2, eyeY-eyeSize/2, eyeSize, eyeSize);
 			}
 		}
