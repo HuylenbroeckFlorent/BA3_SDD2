@@ -51,7 +51,9 @@ public class BSP{
 		if(!segments.isEmpty())
 			root = BSPRec(segments, heuristic);
 		else
-			root = new Node();		
+			root = new Node();
+
+		System.out.println(this.depth());	
 	}
 
 	private Node BSPRec(ArrayList<Segment> segments, int heuristic){
@@ -203,21 +205,6 @@ public class BSP{
 		return (float)(segment.getP1().getX()*segment.getP2().getY()-segment.getP2().getX()*segment.getP1().getY());
 	}
 
-	private float slope(Segment segment){
-		if(segment.getP1().getX()-segment.getP2().getX() == 0f)
-			return INF;
-		else
-			return (float)((segment.getP1().getY()-segment.getP2().getY())/(segment.getP1().getX()-segment.getP2().getX()));
-	}
-
-	private float intercept(Segment segment){
-		float slope = slope(segment);
-		if(slope == INF)
-			return (float)segment.getP1().getX();
-		else
-			return (float)(segment.getP1().getY()-slope*segment.getP1().getX());
-	}
-
 	/**
 	* Splits an ArrayList of Segment into two ArrayLists of Segment given a split line y = mx+p.
 	* Segments above that line are added to plus ArrayList.
@@ -254,7 +241,6 @@ public class BSP{
 					plus.add(new Segment(segment.getP2(), intersect, segment.getColor()));
 				}
 			}
-
 			segments.remove(i);
 		}
 	}
@@ -265,5 +251,27 @@ public class BSP{
 		float c2 = c(segment);
 
 		return new Point2D.Float((c*b2-c2*b)/(b*a2-b2*a),(a*c2-c*a2)/(b*a2-b2*a));
+	}
+
+	public int depth(){
+		return depthRec(root, 0);
+	}
+
+	public int depthRec(Node root,int i){
+		if(!root.hasRight() && !root.hasLeft()){
+			return i;
+		}
+		else{
+			i++;
+			if(root.hasRight() && root.hasLeft()){
+				return Math.max(depthRec(root.getRight(), i), depthRec(root.getLeft(), i));
+			}
+			else if(root.hasRight()){
+				return depthRec(root.getRight(), i);
+			}
+			else{
+				return depthRec(root.getLeft(), i);
+			}
+		}
 	}
 }
