@@ -39,6 +39,30 @@ public class BSPApp{
 	private static BSP bsp;
 	private static int heuristic=0;
 
+	/**
+	* (bspPanelCenterX, bspPanelCenterY) is the center of the bspPanel.
+	*/
+	private static float bspPanelCenterX = 0;
+	private static float bspPanelCenterY = 0;
+
+	/**
+	* BSP tree is bounded ont the x axis by [-bspBoundX, bspBoundX].
+	*/
+	private static float bspBoundX = 0;
+
+	/**
+	* BSP tree is bounded on the y axis by [-bspBoundY, bspBoundY].
+	*/
+	private static float bspBoundY = 0;
+
+	/**
+	* Coeficient applied to BSP bounds when drawing, for viewing purposes.
+	*/ 
+	private static float drawingCoef = 1.1f;
+
+	private static float bspEyeX;
+	private static float bspEyeY;
+
 	private static int eyeX = (int) Integer.MAX_VALUE, eyeY = (int) Integer.MAX_VALUE;
 	private static int eyeSize = 10;
 	private static float eyeSpan = 60.0f;
@@ -125,10 +149,17 @@ public class BSPApp{
 			public void mouseClicked(MouseEvent e){
 				eyeX = e.getX();
 				eyeY = e.getY();
+				bspEyeX=((eyeX-bspPanelCenterX)*(bspBoundX*drawingCoef))/bspPanelCenterX;
+				bspEyeY=((eyeY-bspPanelCenterY)*(bspBoundY*drawingCoef))/bspPanelCenterY;
 				updateBSPPanel();
 				painterPanel.removeAll();
 				painterPanel.revalidate();
 				painterPanel.repaint();
+
+				/*System.out.println("Before : ( "+eyeX+" : "+eyeY+" )"+
+									"\nAfter : ( "+bspEyeX+" : "+bspEyeY+" )"+
+									"\nPanel : width="+bspPanel.getWidth()+" height="+bspPanel.getHeight()+
+									"\nBounds : x="+bspBoundX+" y="+bspBoundY);*/
 			}
 		});
 
@@ -145,7 +176,7 @@ public class BSPApp{
 		gbc.weightx=0.5;
 		gbc.weighty=0.1;
 		gbc.gridx=0;
-		gbc.gridy=GridBagConstraints.RELATIVE;
+		gbc.gridy=GridBagConstraints.RELATIVE; 
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.anchor = GridBagConstraints.LAST_LINE_START;
 		mainPanel.add(painterPanel, gbc);
@@ -160,14 +191,6 @@ public class BSPApp{
 
 	static class BSPPanel extends JPanel{
 
-		BSP bsp;
-
-		float zeroX = 0;
-		float zeroY = 0;
-
-		float dimX = 0;
-		float dimY = 0;
-
 		public BSPPanel(){
 			this.setBackground(Color.WHITE);
 		}
@@ -181,10 +204,10 @@ public class BSPApp{
 		public void paint(Graphics g){
 			super.paint(g);
 
-			if(this.bsp!=null){
+			if(bsp!=null){
 
-				this.zeroX = this.getWidth()/2;
-				this.zeroY = this.getHeight()/2;
+				bspPanelCenterX = this.getWidth()/2;
+				bspPanelCenterY = this.getHeight()/2;
 
 				Node root = bsp.getRoot();
 
@@ -203,10 +226,10 @@ public class BSPApp{
 
 			for(Iterator i = root.getData(); i.hasNext();){
 				Segment seg = (Segment) i.next();
-				int x1 = (int) (zeroX*(seg.getP1().getX())/dimX +zeroX);
-				int y1 = (int) (zeroY*(seg.getP1().getY())/dimY +zeroY);
-				int x2 = (int) (zeroX*(seg.getP2().getX())/dimX +zeroX);
-				int y2 = (int) (zeroY*(seg.getP2().getY())/dimY +zeroY);
+				int x1 = (int) (bspPanelCenterX*(seg.getP1().getX())/(bspBoundX*drawingCoef)+bspPanelCenterX);
+				int y1 = (int) (bspPanelCenterY*(seg.getP1().getY())/(bspBoundY*drawingCoef)+bspPanelCenterY);
+				int x2 = (int) (bspPanelCenterX*(seg.getP2().getX())/(bspBoundX*drawingCoef)+bspPanelCenterX);
+				int y2 = (int) (bspPanelCenterY*(seg.getP2().getY())/(bspBoundY*drawingCoef)+bspPanelCenterY);
 
 				g.setColor(seg.getColor());
 				g.drawLine(x1, this.getHeight()-y1, x2, this.getHeight()-y2);
@@ -221,9 +244,9 @@ public class BSPApp{
 		}
 
 		public void setBSP(BSP bsp){
-			this.bsp = bsp;
-			this.dimX = bsp.getXBound()*1.1f;
-			this.dimY = bsp.getYBound()*1.1f;
+			bsp = bsp;
+			bspBoundX = bsp.getXBound();
+			bspBoundY = bsp.getYBound();
 		}
 	}
 
@@ -249,7 +272,7 @@ public class BSPApp{
 			this.lineOffset=(int)(this.getWidth()*0.05);
 			this.lineHeight=(int)(this.getHeight()/2);
 
-			if(bsp !=null && eyeX!=(int)Integer.MAX_VALUE && eyeY!=(int)Integer.MAX_VALUE){
+			if(bsp !=null && bspEyeX!=(int)Integer.MAX_VALUE && bspEyeY!=(int)Integer.MAX_VALUE){
 				paintersAlgorithm(g, bsp.getRoot());
 			}
 		}
@@ -263,7 +286,7 @@ public class BSPApp{
 				float b = root.getB();
 				float c = root.getC();
 
-				float h = a*eyeX+b*eyeY+c;
+				float h = a*bspEyeX+b*bspEyeY+c;
 
 				if(h>0.0f){
 					paintersAlgorithm(g, root.getLeft());
@@ -329,19 +352,19 @@ public class BSPApp{
 		}
 
 		private float polarAngle(Point2D.Float p){
-			float x = (float)p.getX();
-			float y = (float)p.getY();
+			float x = (float)(p.getX()-bspEyeX);
+			float y = (float)(p.getY()-bspEyeY);
 
-			float theta;
+			float theta = 0f;
 
 			if(x>0){
 				if(y>=0)
-					theta = (float)Math.atan((y-eyeY)/(x-eyeX));
+					theta = (float)Math.atan(y/x);
 				else
-					theta = (float)(Math.atan((y-eyeY)/(x-eyeX))+2*Math.PI);
+					theta = (float)(Math.atan(y/x)+2*Math.PI);
 			}
 			else if(x<0)
-				theta = (float)(Math.atan((y-eyeY)/(x-eyeX))+Math.PI);
+				theta = (float)(Math.atan(y/x)+Math.PI);
 			else{
 				if(y>0)
 					theta = (float)(Math.PI/2);
@@ -350,14 +373,14 @@ public class BSPApp{
 			}
 
 
-			return (float)(Math.acos((x-eyeX)/polarRadius(p)));
+			return theta;
 		}
 
 		private float polarRadius(Point2D.Float p){
-			float x = (float)p.getX();
-			float y = (float)p.getY();
+			float x = (float)(p.getX()-bspEyeX);
+			float y = (float)(p.getY()-bspEyeY);
 
-			return (float)(Math.sqrt((x-eyeX)*(x-eyeX)+(y-eyeY)*(y-eyeY)));
+			return (float)(Math.sqrt(x*x+y*y));
 		}
 	}
 
