@@ -16,6 +16,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.HeadlessException;
 import java.awt.Component;
+import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.geom.Point2D;
@@ -27,6 +28,8 @@ public class BSPApp{
 	private static JPanel mainPanel;
 	private static BSPPanel bspPanel;
 	private static PainterLinePanel painterPanel;
+	private static EyePanel eyePanel;
+	private static JMenuBar menuBar;
 
 	private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private static final int screenHeight = screenSize.height;
@@ -80,7 +83,7 @@ public class BSPApp{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// MENU BAR
-		JMenuBar menuBar = new JMenuBar();
+		menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 
 		JMenu menu = new JMenu("Actions");
@@ -151,7 +154,11 @@ public class BSPApp{
 				eyeY = e.getY();
 				bspEyeX=((eyeX-bspPanelCenterX)*(bspBoundX*drawingCoef))/bspPanelCenterX;
 				bspEyeY=((eyeY-bspPanelCenterY)*(bspBoundY*drawingCoef))/bspPanelCenterY;
-				updateBSPPanel();
+
+				eyePanel.removeAll();
+				eyePanel.repaint();
+				eyePanel.revalidate();
+
 				painterPanel.removeAll();
 				painterPanel.revalidate();
 				painterPanel.repaint();
@@ -181,7 +188,11 @@ public class BSPApp{
 		gbc.anchor = GridBagConstraints.LAST_LINE_START;
 		mainPanel.add(painterPanel, gbc);
 
+		eyePanel = new EyePanel();
+
 		frame.setContentPane(mainPanel);
+		frame.setGlassPane(eyePanel);
+		eyePanel.setVisible(true);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
@@ -193,6 +204,7 @@ public class BSPApp{
 
 		public BSPPanel(){
 			this.setBackground(Color.WHITE);
+			this.setLayout(new BorderLayout());
 		}
 
 		public BSPPanel(BSP bsp){
@@ -212,13 +224,6 @@ public class BSPApp{
 				Node root = bsp.getRoot();
 
 				drawBSP(g, root);
-			}
-
-			if(eyeX!=(int)Integer.MAX_VALUE && eyeY!=(int)Integer.MAX_VALUE){
-				g.setColor(Color.BLACK);
-				g.drawLine(eyeX, eyeY, ((int)(100*Math.cos(eyeTheta1)))+eyeX, ((int)(100*Math.sin(eyeTheta1)))+eyeY);
-				g.drawLine(eyeX, eyeY, ((int)(100*Math.cos(eyeTheta2)))+eyeX, ((int)(100*Math.sin(eyeTheta2)))+eyeY);
-				g.fillOval(eyeX-eyeSize/2, eyeY-eyeSize/2, eyeSize, eyeSize);
 			}
 		}
 
@@ -247,6 +252,25 @@ public class BSPApp{
 			bsp = bsp;
 			bspBoundX = bsp.getXBound();
 			bspBoundY = bsp.getYBound();
+		}
+	}
+
+	static class EyePanel extends JComponent{
+
+		public EyePanel(){
+			super();
+		}
+
+		public void paintComponent(Graphics g){
+
+			System.out.println("Tried to paint here");
+
+			if(eyeX!=(int)Integer.MAX_VALUE && eyeY!=(int)Integer.MAX_VALUE){
+				g.setColor(Color.BLACK);
+				g.drawLine(eyeX, eyeY+menuBar.getHeight(), ((int)(100*Math.cos(eyeTheta1)))+eyeX, ((int)(100*Math.sin(eyeTheta1)))+eyeY+menuBar.getHeight());
+				g.drawLine(eyeX, eyeY+menuBar.getHeight(), ((int)(100*Math.cos(eyeTheta2)))+eyeX, ((int)(100*Math.sin(eyeTheta2)))+eyeY+menuBar.getHeight());
+				g.fillOval(eyeX-eyeSize/2, eyeY-eyeSize/2+menuBar.getHeight(), eyeSize, eyeSize);
+			}
 		}
 	}
 
