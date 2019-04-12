@@ -66,7 +66,7 @@ public class BSPApp{
 	private static int eyeX = (int) Integer.MAX_VALUE, eyeY = (int) Integer.MAX_VALUE;
 	private static int eyeSize = 10;
 	private static float eyeSpan = 60.0f;
-	private static float eyeOrientation = 0.0f;
+	private static float eyeOrientation = 180.0f;
 	private static float eyeTheta1 = (float)(eyeOrientation*(Math.PI/180.0));
 	private static float eyeTheta2 = (float)((eyeOrientation+eyeSpan)*(Math.PI/180.0));
 
@@ -156,10 +156,10 @@ public class BSPApp{
 				painterPanel.revalidate();
 				painterPanel.repaint();
 
-				/*System.out.println("Before : ( "+eyeX+" : "+eyeY+" )"+
+				System.out.println("Before : ( "+eyeX+" : "+eyeY+" )"+
 									"\nAfter : ( "+bspEyeX+" : "+bspEyeY+" )"+
 									"\nPanel : width="+bspPanel.getWidth()+" height="+bspPanel.getHeight()+
-									"\nBounds : x="+bspBoundX+" y="+bspBoundY);*/
+									"\nBounds : x="+bspBoundX+" y="+bspBoundY);
 			}
 		});
 
@@ -232,7 +232,7 @@ public class BSPApp{
 				int y2 = (int) (bspPanelCenterY*(seg.getP2().getY())/(bspBoundY*drawingCoef)+bspPanelCenterY);
 
 				g.setColor(seg.getColor());
-				g.drawLine(x1, this.getHeight()-y1, x2, this.getHeight()-y2);
+				g.drawLine(x1, /*this.getHeight()-*/y1, x2, /*this.getHeight()-*/y2);
 			}
 
 			if(root.hasLeft()){
@@ -323,13 +323,11 @@ public class BSPApp{
 					theta2=tmp;
 				}
 
-				boolean draw=true;
-
 				if(theta1<eyeTheta1){
 					if(theta2<eyeTheta2 && theta2>eyeTheta1)
 						x1=lineOffset;
 					else
-						draw=false;
+						continue;
 				}
 				else
 					x1=lineOffset+(int)(((theta1-eyeTheta1)/(eyeTheta2-eyeTheta1))*lineWidth);
@@ -338,16 +336,14 @@ public class BSPApp{
 					if(theta1>eyeTheta1 && theta1<eyeTheta2)
 						x2=lineOffset+lineWidth;
 					else
-						draw=false;
+						continue;
 				}
 				else
 					x2=lineOffset+(int)(((theta2-eyeTheta1)/(eyeTheta2-eyeTheta1))*lineWidth);
 
-				if(draw){
-					g.setColor(segment.getColor());
-					//System.out.println("x1="+x1+" x2="+x2);
-					g.drawLine(x1, lineHeight, x2, lineHeight);
-				}
+				g.setColor(segment.getColor());
+				System.out.println("x1="+x1+" x2="+x2+" Color="+segment.getColor());
+				g.drawLine(x1, lineHeight, x2, lineHeight);
 			}
 		}
 
