@@ -19,7 +19,7 @@
 	</target>
 
 	<target name="run" depends="build">
-		<java classname="BSPApp" classpath="${build}" fork="true"/>
+		<java classname="TestGUI" classpath="${build}" fork="true"/>
 	</target>
 
 	<target name="clean">
