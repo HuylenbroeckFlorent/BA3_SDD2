@@ -11,6 +11,7 @@ import java.awt.geom.Point2D;
 public class Segment{
 	private Point2D.Float p1, p2;
 	private Color color;
+	private boolean p1IntersectsBorder=false, p2IntersectsBorder=false;
 
 	/**
 	* @param x1 	float, x coordinate for the first extremity of the Segment.
@@ -113,6 +114,18 @@ public class Segment{
 	*/
 	public void setColor(Color color){
 		this.color=color;
+	}
+
+	public void p1IntersectsBorder(boolean bool){
+		this.p1IntersectsBorder=bool;
+	}
+
+	public void p2IntersectsBorder(boolean bool){
+		this.p2IntersectsBorder=bool;
+	}
+
+	public boolean isFreeSplit(){
+		return (p1IntersectsBorder && p2IntersectsBorder);
 	}
 
 	public String toString(){

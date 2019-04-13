@@ -32,6 +32,8 @@ public class BSP{
 	private int x_bound;
 	private int y_bound;
 	private int n_segments;
+	private int size=0;
+	private int emptyLeaves=0;
 
 	private Random rd = new Random();
 
@@ -48,19 +50,23 @@ public class BSP{
 		this.path=path;
 		ArrayList<Segment> segments = openBSPFile(path);
 
+		size=0;
+		emptyLeaves=0;
+
 		if(!segments.isEmpty())
 			root = BSPRec(segments, heuristic);
 		else
-			root = new Node();
-
-		System.out.println(this.depth());	
+			root = new Node();	
 	}
 
 	private Node BSPRec(ArrayList<Segment> segments, int heuristic){
 
+		size++;
+
 		Node node = new Node();
 
 		if(segments.size()==0){
+			emptyLeaves++;
 			return node;
 		}
 		else if(segments.size()==1){
@@ -102,10 +108,13 @@ public class BSP{
 		}
 	}
 
-		
-
 	private int freeSplit(ArrayList<Segment> segments){
-		return 0;
+		for(int i=0; i<segments.size(); i++){
+			Segment seg = segments.get(i);
+			if(seg.isFreeSplit())
+				return i;
+		}
+		return rd.nextInt(segments.size());
 	}
 
 	/**
@@ -151,6 +160,14 @@ public class BSP{
 	*/
 	public String getPath(){
 		return path;
+	}
+
+	public static String getHeuristic(int i){
+		switch(i){
+			case 2: return "FREE_SPLITS";
+			case 1: return "ORDERED";
+			default: return "RANDOM";
+		}
 	}
 
 	/**
@@ -225,20 +242,33 @@ public class BSP{
 				i++;
 				continue;
 			}
-			else if(p1>=0f && p2>=0f)
-				plus.add(segment);
-			else if(p1<=0f && p2<=0f)
-				minus.add(segment);
 			else{
-				Point2D.Float intersect = intersection(segment, a, b, c);
-
-				if(p1>=0f){
-					plus.add(new Segment(segment.getP1(), intersect, segment.getColor()));
-					minus.add(new Segment(segment.getP2(), intersect, segment.getColor()));
+				if(p1==0f)
+					segment.p1IntersectsBorder(true);
+				if(p2==0f)
+					segment.p2IntersectsBorder(true);
+				if(p1>=0f && p2>=0f){
+					plus.add(segment);
+				}
+				else if(p1<=0f && p2<=0f){
+					minus.add(segment);
 				}
 				else{
-					minus.add(new Segment(segment.getP1(), intersect, segment.getColor()));
-					plus.add(new Segment(segment.getP2(), intersect, segment.getColor()));
+					Point2D.Float intersect = intersection(segment, a, b, c);
+
+					Segment s1 = new Segment(segment.getP1(), intersect, segment.getColor());
+					s1.p2IntersectsBorder(true);
+					Segment s2 = new Segment(intersect, segment.getP2(), segment.getColor());
+					s2.p1IntersectsBorder(true);
+
+					if(p1>=0f){
+						plus.add(s1);
+						minus.add(s2);
+					}
+					else{
+						minus.add(s1);
+						plus.add(s2);
+					}
 				}
 			}
 			segments.remove(i);
@@ -253,25 +283,33 @@ public class BSP{
 		return new Point2D.Float((c*b2-c2*b)/(b*a2-b2*a),(a*c2-c*a2)/(b*a2-b2*a));
 	}
 
-	public int depth(){
-		return depthRec(root, 0);
+	public int height(){
+		return root!=null ? heightRec(root, 1) : 0;
 	}
 
-	public int depthRec(Node root,int i){
+	private int heightRec(Node root, int i){
 		if(!root.hasRight() && !root.hasLeft()){
 			return i;
 		}
 		else{
 			i++;
 			if(root.hasRight() && root.hasLeft()){
-				return Math.max(depthRec(root.getRight(), i), depthRec(root.getLeft(), i));
+				return Math.max(heightRec(root.getRight(), i), heightRec(root.getLeft(), i));
 			}
 			else if(root.hasRight()){
-				return depthRec(root.getRight(), i);
+				return heightRec(root.getRight(), i);
 			}
 			else{
-				return depthRec(root.getLeft(), i);
+				return heightRec(root.getLeft(), i);
 			}
 		}
+	}
+
+	public int size(){
+		return size;
+	}
+
+	public int emptyLeaves(){
+		return emptyLeaves;
 	}
 }
