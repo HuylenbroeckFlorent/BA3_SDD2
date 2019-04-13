@@ -23,7 +23,7 @@ import java.awt.geom.Point2D;
 
 import java.io.File;
 
-public class BSPApp{
+public class TestGUI{
 	private static JFrame frame;
 	private static JPanel mainPanel;
 	private static BSPPanel bspPanel;
