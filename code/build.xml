@@ -18,8 +18,21 @@
 		</javadoc>
 	</target>
 
-	<target name="run" depends="build">
+	<target name="testgui" depends="build">
 		<java classname="TestGUI" classpath="${build}" fork="true"/>
+	</target>
+
+	<target name="test" depends="build">
+		<property name="path" value="octogone.txt"/>
+		<property name="n" value="100"/>
+		<property name="ex" value="0"/>
+		<property name="ey" value="0"/>
+		<java classname="TestNoGUI" classpath="${build}" fork="true">
+			<arg value="${path}"/>
+			<arg value="${n}"/>
+			<arg value="${ex}"/>
+			<arg value="${ey}"/>
+		</java>
 	</target>
 
 	<target name="clean">

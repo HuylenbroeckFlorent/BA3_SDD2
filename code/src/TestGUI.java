@@ -42,23 +42,23 @@ public class TestGUI{
 	private static BSP bsp;
 	private static int heuristic=0;
 
-	/**
+	/*
 	* (bspPanelCenterX, bspPanelCenterY) is the center of the bspPanel.
 	*/
 	private static float bspPanelCenterX = 0;
 	private static float bspPanelCenterY = 0;
 
-	/**
+	/*
 	* BSP tree is bounded ont the x axis by [-bspBoundX, bspBoundX].
 	*/
 	private static float bspBoundX = 0;
 
-	/**
+	/*
 	* BSP tree is bounded on the y axis by [-bspBoundY, bspBoundY].
 	*/
 	private static float bspBoundY = 0;
 
-	/**
+	/*
 	* Coeficient applied to BSP bounds when drawing, for viewing purposes.
 	*/ 
 	private static float drawingCoef = 1.1f;

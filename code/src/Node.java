@@ -19,53 +19,12 @@ public class Node{
 		data=new LinkedList<Segment>();
 	}
 
-	public Node(Segment segment){
-		this();
-		addSegment(segment);
-		left=null;
-		right=null;
-		a=0.f;
-		b=0.f;
-	}
-
-
 	/**
-	* @param segment 	Segment to initialize the Node with.
-	* @param left 		Node, left son.
-	* @param right 		Node, right son.
-	* @param m 			float, slope of the 2D line that the Node describes.
-	* @param p 			float, intercept of the 2D line that the Node describes.
+	* Tells if the Node has a set left son.
+	*
+	* @return 	boolean, true if the left son is set and false otherwise.
 	*/
-	public Node(Segment segment, Node left, Node right, float a, float b, float c){
-		this();
-		addSegment(segment);
-		this.left=left;
-		this.right=right;
-		this.a=a;
-		this.b=b;
-		this.c=c;
-	}
-
-	/**
-	* @param segments 	ArrayList<Segment> to initialize the Node with.
-	* @param left 		Node, left son.
-	* @param right 		Node, right son.
-	* @param m 			float, slope of the 2D line that the Node describes.
-	* @param p 			float, intercept of the 2D line that the Node describes.
-	*/
-	public Node(ArrayList<Segment> segments, Node left, Node right, float a, float b, float c){
-		this();
-		for(Segment segment : segments){
-			addSegment(segment);
-		}
-		this.left=left;
-		this.right=right;
-		this.a=a;
-		this.b=b;
-		this.c=c;
-	}
-
-	public Boolean hasLeft(){
+	public boolean hasLeft(){
 		return left!=null;
 	}
 
@@ -87,7 +46,12 @@ public class Node{
 		this.left=left;
 	}
 
-	public Boolean hasRight(){
+	/**
+	* Tells if the Node has a set right son.
+	*
+	* @return 	boolean, true if the right son is set and false otherwise.
+	*/
+	public boolean hasRight(){
 		return right!=null;
 	}
 
@@ -122,65 +86,81 @@ public class Node{
 	* Adds a segment to a Node.
 	*
 	* @param segment  	Segment to add.
-	* @return 	Boolean, true if the Segment has been added successfuly (useful in Leaf sub-class)
 	*/
-	public Boolean addSegment(Segment segment){
+	public void addSegment(Segment segment){
 		data.add(segment);
-		return true;
 	}
 
-	public Boolean addSegment(ArrayList<Segment> segments){
+	/**
+	* Adds mutiple segments from an ArrayList to a Node.
+	*
+	* @param segments 	ArrayList<Segment> containing the Segments to add.
+	*/
+	public void addSegment(ArrayList<Segment> segments){
 		for(Segment segment : segments){
 			data.add(segment);
 		}
-		return true;
-	}
-
-	/**
-	* Clears all the segments contained in a Node.
-	*/
-	public void clearSegments(){
-		data=new LinkedList<Segment>();
-	}
-
-	/**
-	* Returns the number of segment contained in a Node.
-	*
-	* @return 	int, number of segments.
-	*/
-	public int getSize(){
-		return data.size();
 	}
 
 	/**
 	* Tells if the Node is a leaf or an inner Node.
 	*
-	* @return 	Boolean, true if the Node is a Leaf.
+	* @return 	boolean, true if the Node is a Leaf.
 	*/
-	public Boolean isLeaf(){
+	public boolean isLeaf(){
 		return(left==null && right==null);
 	}
 	
+	/**
+	* Gives the a coeficient of the 2D splitting line equation ax+by+c=0 contained in the Node.
+	*
+	* @return 	float, a coeficient.
+	*/
 	public float getA(){
 		return a;
 	}		
 
+	/**
+	* Sets the a coeficient of the 2D splitting line equation ax+by+c=0 contained in the Node.
+	*
+	* @param a 	float, a coeficient.
+	*/
 	public void setA(float a){
 		this.a = a;
 	}
 
+	/**
+	* Gives the b coeficient of the 2D splitting line equation ax+by+c=0 contained in the Node.
+	*
+	* @return 	float, b coeficient.
+	*/
 	public float getB(){
 		return b;
 	}		
 
+	/**
+	* Sets the b coeficient of the 2D splitting line equation ax+by+c=0 contained in the Node.
+	*
+	* @param b 	float, b coeficient.
+	*/
 	public void setB(float b){
 		this.b = b;
 	}
 
+	/**
+	* Gives the c coeficient of the 2D splitting line equation ax+by+c=0 contained in the Node.
+	*
+	* @return 	float, c coeficient.
+	*/
 	public float getC(){
 		return c;
 	}		
 
+	/**
+	* Sets the c coeficient of the 2D splitting line equation ax+by+c=0 contained in the Node.
+	*
+	* @param c 	float, c coeficient.
+	*/
 	public void setC(float c){
 		this.c = c;
 	}
