@@ -250,7 +250,7 @@ public class TestGUI{
 		}
 
 		public void setBSP(BSP bsp){
-			bsp = bsp;
+			this.bsp = bsp;
 			bspBoundX = bsp.getXBound();
 			bspBoundY = bsp.getYBound();
 		}
@@ -263,8 +263,6 @@ public class TestGUI{
 		}
 
 		public void paintComponent(Graphics g){
-
-			System.out.println("Tried to paint here");
 
 			if(eyeX!=(int)Integer.MAX_VALUE && eyeY!=(int)Integer.MAX_VALUE){
 				g.setColor(Color.BLACK);
@@ -298,77 +296,44 @@ public class TestGUI{
 			this.lineHeight=(int)(this.getHeight()/2);
 
 			if(bsp !=null && bspEyeX!=(int)Integer.MAX_VALUE && bspEyeY!=(int)Integer.MAX_VALUE){
-				paintersAlgorithm(g, bsp.getRoot());
-			}
-		}
+				ArrayList<Segment> segments = new ArrayList<Segment>();
+				bsp.painter(bspEyeX, bspEyeY, segments);
+				
+				for(int i=0; i<segments.size(); i++){
+					Segment segment = segments.get(i);
 
-		private void paintersAlgorithm(Graphics g, Node root){
-			if(root.isLeaf()){
-				scanConvert(g, root);
-			}
-			else{
-				float a = root.getA();
-				float b = root.getB();
-				float c = root.getC();
+					float theta1 = polarAngle(segment.getP1());
+					float theta2 = polarAngle(segment.getP2());
 
-				float h = a*bspEyeX+b*bspEyeY+c;
+					int x1=0, x2=0;
 
-				if(h>0.0f){
-					paintersAlgorithm(g, root.getLeft());
-					scanConvert(g, root);
-					paintersAlgorithm(g, root.getRight());
-				}
-				else if(h<0.0f){
-					paintersAlgorithm(g, root.getRight());
-					scanConvert(g, root);
-					paintersAlgorithm(g, root.getLeft());
-				}
-				else{
-					paintersAlgorithm(g, root.getRight());
-					paintersAlgorithm(g, root.getLeft());
-				}
-			}
-		}
+					if(theta1>theta2){
+						float tmp = theta1;
+						theta1=theta2;
+						theta2=tmp;
+					}
 
-		private void scanConvert(Graphics g, Node root){
-			
-			for(Iterator i = root.getData(); i.hasNext();){
-				Segment segment = (Segment) i.next();
-
-				float theta1 = polarAngle(segment.getP1());
-				float theta2 = polarAngle(segment.getP2());
-
-				//System.out.println("Theta1="+theta1+" Theta2="+theta2);
-
-				int x1=0, x2=0;
-
-				if(theta1>theta2){
-					float tmp = theta1;
-					theta1=theta2;
-					theta2=tmp;
-				}
-
-				if(theta1<eyeTheta1){
-					if(theta2<eyeTheta2 && theta2>eyeTheta1)
-						x1=lineOffset;
+					if(theta1<eyeTheta1){
+						if(theta2<eyeTheta2 && theta2>eyeTheta1)
+							x1=lineOffset;
+						else
+							continue;
+					}
 					else
-						continue;
-				}
-				else
-					x1=lineOffset+(int)(((theta1-eyeTheta1)/(eyeTheta2-eyeTheta1))*lineWidth);
+						x1=lineOffset+(int)(((theta1-eyeTheta1)/(eyeTheta2-eyeTheta1))*lineWidth);
 
-				if(theta2>eyeTheta2){
-					if(theta1>eyeTheta1 && theta1<eyeTheta2)
-						x2=lineOffset+lineWidth;
+					if(theta2>eyeTheta2){
+						if(theta1>eyeTheta1 && theta1<eyeTheta2)
+							x2=lineOffset+lineWidth;
+						else
+							continue;
+					}
 					else
-						continue;
-				}
-				else
-					x2=lineOffset+(int)(((theta2-eyeTheta1)/(eyeTheta2-eyeTheta1))*lineWidth);
+						x2=lineOffset+(int)(((theta2-eyeTheta1)/(eyeTheta2-eyeTheta1))*lineWidth);
 
-				g.setColor(segment.getColor());
-				System.out.println("x1="+x1+" x2="+x2+" Color="+segment.getColor());
-				g.drawLine(x1, lineHeight, x2, lineHeight);
+					g.setColor(segment.getColor());
+					g.drawLine(x1, lineHeight, x2, lineHeight);
+				}
 			}
 		}
 
