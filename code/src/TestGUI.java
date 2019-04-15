@@ -22,6 +22,7 @@ import java.awt.GridBagConstraints;
 import java.awt.geom.Point2D;
 
 import java.io.File;
+import java.io.IOException;
 
 public class TestGUI{
 	private static JFrame frame;
@@ -427,7 +428,11 @@ public class TestGUI{
 
 	private static void updateBSPPanel(){
 		if(path!=null){
-			bsp = new BSP(path, heuristic);
+			try{
+				bsp = new BSP(path, heuristic);
+			}catch(IOException ioe){
+				throw new RuntimeException(ioe);
+			}
 			bspPanel.removeAll();
 			bspPanel.setBSP(bsp);
 			bspPanel.revalidate();

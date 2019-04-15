@@ -35,7 +35,7 @@ public class BSP{
 	private int size=0;
 	private int emptyLeaves=0;
 
-	private Random rd = new Random();
+	private Random rd = new Random(System.nanoTime());
 
 	/**
 	* @param path 		String, path to the Scene2D file.
@@ -55,6 +55,8 @@ public class BSP{
 		
 		size=0;
 		emptyLeaves=0;
+
+		rd = new Random(System.nanoTime());
 
 		if(!segments.isEmpty())
 			root = BSPRec(segments, heuristic);

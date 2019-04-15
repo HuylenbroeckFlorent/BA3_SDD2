@@ -1,0 +1,101 @@
+\documentclass[11pts]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{calrsfs}
+
+\title{Structure de données II\\Rapport de projet}
+\author{HUYLENBROECK Florent\\DACHY Corentin\\BA3 Info}
+\date{15 avril 2019}
+
+\begin{document}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+\section{Introduction}
+\subsection{Notions théoriques}
+\begin{itemize}
+\item Une \textbf{scène} est un ensemble de segments colorés dans un repère fini. Dans ce rapport, nous nommerons une scène $S$.
+\item Un \textbf{BSP} (\emph{Binary Space Partition} ou \emph{partition binaire de l'espace}) est un arbre binaire permettant de représenter une scène en fragmentant celle-ci en sous-espaces convexes, lesquels contiennent au plus un segment.
+Son fonctionnement est le suivant :\\[.2cm]
+Soit $v$ la racine de l'arbre $\tau$.
+\begin{itemize}
+\item Si $v$ est une feuille, alors $S(v)$ (sous-ensemble de segments de la scéne contenus dans $v$) contient $0$ ou $1$ segment.
+\item Sinon $v$ est un noeud interne du BSP. Dans ce cas, $v$ contient une équation de droite de la forme $\ell\equiv ax+by+c=0$ et un ensemble $S(v)$\\
+Le fils gauche $v_{gauche}$ de $v$ sera la racine du sous-BSP $\tau^-$ décrivant la partie de la scène située sous la droite $\ell$, et le fils droit $v_{droit}$ de $v$ sera la racine du sous-BSP $\tau^+$ décrivant la partie de la scéne située au-dessus de la droite $\ell$.\\
+$S(v)$ contient les segments totalement inclus à la droite $\ell$. Leur nombre n'est pas limité comme dans les feuilles.
+\end{itemize}
+Si une droite de séparation $\ell_v$ d'un noeud interne $v$ intersecte un segment en un point autre qu'une extrémité, ce segment est coupé en deux parties et celles-ci sont ajoutées dans $\tau^-$ et $\tau^+$ en conséquence.
+\item La \textbf{taille} d'un BSP est le nombre total de segments contenus dans chacuns des noeuds de celui-ci.
+\item Une \textbf{heuristique} de construction d'un BSP intervient au moment de choisir le segment de la scène par lequel passera la prochaine droite de séparation $\ell$.
+\end{itemize}
+
+\subsection{Enoncé du problème}
+Pour ce projet, il nous a été demandé à partir de fichier \emph{.txt} au format Scene2D de :
+\begin{itemize}
+\item Construire un BSP de la scène décrite dans le fichier.
+\item Appliquer l'algorithme du peintre sur ce BSP.
+\item Fournir une application ayant deux modes, console et graphique, afin de tester différentes heuristiques de construction pour les BSP. L'application console doit aussi mesurer la hauteur/taille du BSP, le temps CPU pris par la construction et par l'excecution de l'algorithme du peintre.
+\item Trois heuristiques nous ont été imposée pour ce projet :
+\begin{itemize}
+\item RANDOM - Le segment est choisi au hasard parmis $S(v)$.
+\item ORDERED - Le segment choisi est le premier dans $S(v)$.
+\item FREE\_SPLIT - Le segment choisi est le premier dans $S(v)$ dont les deux extrêmités sont chacune sur une droite de séparation $\ell$. Si aucun segment satisfaisant ces condtitions n'est trouvé dans $S(v)$, alors le segment est choisi au hasard dans $S(v)$.
+\end{itemize}
+\end{itemize}
+
+\newpage
+\section{Calcul de la complexité de l'algorithme du peintre}
+
+
+\newpage
+\section{Comparaison des heuristiques}
+
+
+\newpage
+\section{Mode d'emploi du logiciel de test}
+\subsection*{Mode graphique}
+Ouvrir un terminal, se déplacer dans le dossier \emph{code} du logiciel et executer la commande :
+\begin{lstlisting}[language=bash]
+$ ant testgui
+\end{lstlisting}
+Le logiciel consiste en une fenêtre séparée en deux parties. La partie du haut permet de visualiser le BSP et celle du bas ce que voit l'oeil.
+Afin d'ouvrir un BSP, il faut se rendre dans le menu \emph{Actions} $\rightarrow$ \emph{Open} et choisir un fichier Scene2D valide.
+Il est possible de changer l'heuristique de construction via le menu \emph{Heuristics}.
+\subsection*{Mode console}
+Ouvrir un terminal, se déplacer dans le dossier \emph{code} du logiciel et executer la commande :
+\begin{lstlisting}[language=bash]
+$ ant test
+\end{lstlisting}
+Il est possible de spécifier les conditions de départ des test grâce aux paramètres suivants :
+\begin{itemize}%[\itemsep=0em]
+\item \emph{path} - Le chemin jusqu'au fichier Scene2D. La valeur par défaut est "octogone.txt".
+\item \emph{n} - Le nombre de répétitons du test. La valeur par défaut est 100.
+\item \emph{ex} - L'abscisse de l'oeil. La valeur par défaut est 0.
+\item \emph{ey} - L'ordonnée de l'oeil. La valeur par défaut est 0.
+\end{itemize}
+Pour modifier ces paramètres, il faut utiliser le modificateur \emph{-D}.
+\begin{lstlisting}[language=bash]
+$ ant test -Dpath=somepath.txt
+\end{lstlisting}
+Pour modifier plusieurs paramétres, plusieurs \emph{-D} sont nécessaires.
+\begin{lstlisting}[language=bash]
+$ ant test -Dpath=somepath.txt -Dn=1000 -Dex=10.05 -Dey=3.141
+\end{lstlisting}
+\subsection*{Javadoc}
+Ouvrir un terminal, se déplacer dans le dossier \emph{code} du logiciel et executer la commande :
+\begin{lstlisting}[language=bash]
+$ ant doc
+\end{lstlisting}
+
+
+\newpage
+\section{Conclusion}
+
+\end{document}
