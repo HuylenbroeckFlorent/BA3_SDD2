@@ -32,6 +32,7 @@ public class BSP{
 	private int x_bound;
 	private int y_bound;
 	private int n_segments;
+	private int nNodes=0;
 	private int size=0;
 	private int emptyLeaves=0;
 
@@ -53,8 +54,9 @@ public class BSP{
 			throw new RuntimeException(e);
 		}
 		
-		size=0;
+		nNodes=0;
 		emptyLeaves=0;
+		size=0;
 
 		rd = new Random(System.nanoTime());
 
@@ -73,7 +75,7 @@ public class BSP{
 	*/
 	private Node BSPRec(ArrayList<Segment> segments, int heuristic){
 
-		size++;
+		nNodes++;
 
 		Node node = new Node();
 
@@ -82,6 +84,7 @@ public class BSP{
 			return node;
 		}
 		else if(segments.size()==1){
+			size++;
 			node.addSegment(segments);
 			return node;
 		}
@@ -100,6 +103,7 @@ public class BSP{
 
 			Segment segment = segments.get(split);
 			node.addSegment(segments.get(split));
+			size++;
 			segments.remove(split);
 
 			node.setA(a(segment));
@@ -111,6 +115,7 @@ public class BSP{
 
 			split(node.getA(), node.getB(), node.getC(), segments, left, right);
 
+			size+=segments.size();
 			node.addSegment(segments);
 
 			node.setLeft(BSPRec(left, heuristic));
@@ -379,6 +384,15 @@ public class BSP{
 				return heightRec(root.getLeft(), i);
 			}
 		}
+	}
+
+	/**
+	* Gives the number of nodes of the BSP.
+	*
+	* @return 	int, number of nodes of the BSP.
+	*/
+	public int nNodes(){
+		return nNodes;
 	}
 
 	/**

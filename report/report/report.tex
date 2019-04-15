@@ -8,6 +8,10 @@
 \usepackage{xcolor}
 \usepackage{listings}
 \usepackage{calrsfs}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{makecell}
 
 \title{Structure de données II\\Rapport de projet}
 \author{HUYLENBROECK Florent\\DACHY Corentin\\BA3 Info}
@@ -21,18 +25,18 @@
 \section{Introduction}
 \subsection{Notions théoriques}
 \begin{itemize}
-\item Une \textbf{scène} est un ensemble de segments colorés dans un repère fini. Dans ce rapport, nous nommerons une scène $S$.
-\item Un \textbf{BSP} (\emph{Binary Space Partition} ou \emph{partition binaire de l'espace}) est un arbre binaire permettant de représenter une scène en fragmentant celle-ci en sous-espaces convexes, lesquels contiennent au plus un segment.
+\item Une \textbf{scène} $S$ est un ensemble de segments colorés dans un repère fini.
+\item Un \textbf{BSP} (\emph{Binary Space Partition} ou \emph{partition binaire de l'espace}) $\tau$ est un arbre binaire permettant de représenter une scène en fragmentant celle-ci en sous-espaces convexes, lesquels contiennent au plus un segment.
 Son fonctionnement est le suivant :\\[.2cm]
-Soit $v$ la racine de l'arbre $\tau$.
+Soit $v$ la racine de $\tau$.
 \begin{itemize}
 \item Si $v$ est une feuille, alors $S(v)$ (sous-ensemble de segments de la scéne contenus dans $v$) contient $0$ ou $1$ segment.
 \item Sinon $v$ est un noeud interne du BSP. Dans ce cas, $v$ contient une équation de droite de la forme $\ell\equiv ax+by+c=0$ et un ensemble $S(v)$\\
-Le fils gauche $v_{gauche}$ de $v$ sera la racine du sous-BSP $\tau^-$ décrivant la partie de la scène située sous la droite $\ell$, et le fils droit $v_{droit}$ de $v$ sera la racine du sous-BSP $\tau^+$ décrivant la partie de la scéne située au-dessus de la droite $\ell$.\\
+Le fils gauche $v^-$ de $v$ sera la racine du sous-BSP $\tau^-$ décrivant la partie de la scène située sous la droite $\ell$, et le fils droit $v^+$ de $v$ sera la racine du sous-BSP $\tau^+$ décrivant la partie de la scéne située au-dessus de la droite $\ell$.\\
 $S(v)$ contient les segments totalement inclus à la droite $\ell$. Leur nombre n'est pas limité comme dans les feuilles.
 \end{itemize}
 Si une droite de séparation $\ell_v$ d'un noeud interne $v$ intersecte un segment en un point autre qu'une extrémité, ce segment est coupé en deux parties et celles-ci sont ajoutées dans $\tau^-$ et $\tau^+$ en conséquence.
-\item La \textbf{taille} d'un BSP est le nombre total de segments contenus dans chacuns des noeuds de celui-ci.
+\item La \textbf{taille} $t$ d'un BSP est le nombre total de segments contenus dans chacuns des noeuds de celui-ci.
 \item Une \textbf{heuristique} de construction d'un BSP intervient au moment de choisir le segment de la scène par lequel passera la prochaine droite de séparation $\ell$.
 \end{itemize}
 
@@ -41,17 +45,53 @@ Pour ce projet, il nous a été demandé à partir de fichier \emph{.txt} au for
 \begin{itemize}
 \item Construire un BSP de la scène décrite dans le fichier.
 \item Appliquer l'algorithme du peintre sur ce BSP.
-\item Fournir une application ayant deux modes, console et graphique, afin de tester différentes heuristiques de construction pour les BSP. L'application console doit aussi mesurer la hauteur/taille du BSP, le temps CPU pris par la construction et par l'excecution de l'algorithme du peintre.
+\item Fournir une application ayant deux modes, console et graphique, afin de tester différentes heuristiques de construction pour les BSP. L'application console doit aussi mesurer la hauteur/taille du BSP, le temps CPU pris par la construction et par l'excecution de l'algorithme du peintre (\emph{Voir section suivante)}.
 \item Trois heuristiques nous ont été imposée pour ce projet :
 \begin{itemize}
 \item RANDOM - Le segment est choisi au hasard parmis $S(v)$.
 \item ORDERED - Le segment choisi est le premier dans $S(v)$.
-\item FREE\_SPLIT - Le segment choisi est le premier dans $S(v)$ dont les deux extrêmités sont chacune sur une droite de séparation $\ell$. Si aucun segment satisfaisant ces condtitions n'est trouvé dans $S(v)$, alors le segment est choisi au hasard dans $S(v)$.
+\item FREE\_SPLIT - Le segment choisi est le premier dans $S(v)$ dont les deux extrêmités sont chacune sur une droite de séparation $\ell$. Si aucun segment satisfaisant ces condtitions n'est trouvé dans $S(v)$, alors le segment y est choisi au hasard.
 \end{itemize}
 \end{itemize}
 
 \newpage
 \section{Calcul de la complexité de l'algorithme du peintre}
+Introduisons la notion d'\emph{oeil} $e$ dans une scène $S$. Celui-ci servira de point de vue des éléments de la scène. L'algorithme du peintre est un algorithme simple de rendu d'une scène sur un objet de dimension inférieure. (\emph{Par exemple, afficher la vue en 2D par un oeil d'une scène en 3D.}) Il permet de déterminer quels fragments de la scène sont visible par l'oeil en fonction de sa position dans le repère.
+
+\begin{algorithm}[H]
+\caption{painter's algorithm}
+\begin{tabular}{lrl}
+\textbf{Entrées} : &$v$ : &Noeud, racine du BSP.\\
+&$e$ :&Point, position de l'oeil dans la scène.\\[.25cm]
+\textbf{Sorties} :& &/\\[.25cm]
+\textbf{Effets} :& &Les appels à la fonction de dessin sont effectués dans l'ordre correct\\
+& & d'affichage pour l'oeil $e$.\\[.25cm]
+\end{tabular}
+\begin{algorithmic}[1]
+\Procedure{paintersAlgorithm}{$A,B$}
+\If{$v$ est une feuille}
+	\State Dessiner les fragments de $S(v)$
+\Else
+	\If{$e$ est au-dessus de la droite de séparation $\ell$ de $v$}
+		\State \Call{paintersAlgorithm}{$v^+,e$}
+		\State Dessiner les fragments de $S(v)$
+		\State \Call{paintersAlgorithm}{$v^-,e$}
+	\ElsIf{$e$ est en desous de la droite de séparation $\ell$ de $v$}
+		\State \Call{paintersAlgorithm}{$v^-,e$}
+		\State Dessiner les fragments de $S(v)$
+		\State \Call{paintersAlgorithm}{$v^+,e$}
+	\Else
+		\State \Call{paintersAlgorithm}{$v^+,e$}
+		\State \Call{paintersAlgorithm}{$v^-,e$}
+	\EndIf
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+\noindent\textbf{NOTE} : la fonction \emph{Dessiner les fragments de $S(v)$} est en $O(s)$ où $s$ est le nombre de segments dans $S(v)$.\\[1cm]
+La complexité de l'algorithme du peintre va dépendre de la taille de $\tau$. Elle va donc dépendre de la fragmentation des segments de $S$ lors de la construction de $\tau$.\\
+On remarque en effet que tout le BSP est parcouru par l'algorithme car dans chaques cas, en partant d'un noeud interne, on applique l'algorithme sur ses deux fils. La récursion s'arrête uniquement lorsqu'on arrive à une feuille. Nous sommes donc pour l'instant en $O(n)$ où $n$ est le nombre de noeud de $\tau$\\[.2cm]
+A chaque noeud, l'algorithme dessine tous les segments contenus dans $S(v)$ (sauf quand $e$ se situe sur la droite de séparation $\ell$ du noeud, auquel cas il n'est pas nécessaire de dessiner les fragments dans $S(v)$ car ils ne seront pas visible depuis $e$). Nous avons donc une complexité de $O(n\cdot s)$ ce qui donne, par la manière dont nous avons défini la taille d'un BSP, $O(t)$.
 
 
 \newpage

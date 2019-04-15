@@ -89,6 +89,7 @@ public class TestNoGUI{
 	public static BSPTestResult bspTest(String path, int heuristic, int nRuns, float eyeX, float eyeY){
 		long time = 0;
 		BSP bsp = null;
+		int nNodes = 0;
 		int size = 0;
 		int height = 0;
 		int emptyLeaves = 0;
@@ -107,12 +108,14 @@ public class TestNoGUI{
 			size += bsp.size();
 			height += bsp.height();
 			emptyLeaves += bsp.emptyLeaves();
+			nNodes += bsp.nNodes();
 			start=CPUTime();
 			bsp.painter(eyeX, eyeY, new ArrayList<Segment>());
 			timePainter += CPUTime() - start;
 		}
 
-		return new BSPTestResult((double)size/nRuns, 
+		return new BSPTestResult((double)size/nRuns,
+								(double)nNodes/nRuns, 
 								(double)emptyLeaves/nRuns,
 								(double)height/nRuns, 
 								(double)time/(nRuns*1000000),
@@ -126,6 +129,7 @@ public class TestNoGUI{
 	*/
 	public static class BSPTestResult{
 		double avgSize;
+		double avgnNodes;
 		double avgEmptyLeaves;
 		double avgHeight;
 		double avgTime;
@@ -133,11 +137,13 @@ public class TestNoGUI{
 		
 
 		public BSPTestResult(	double avgSize, 
+								double avgnNodes,
 								double avgEmptyLeaves, 
 								double avgHeight, 
 								double avgTime, 
 								double avgTimePainter){
 			this.avgSize=avgSize;
+			this.avgnNodes=avgnNodes;
 			this.avgEmptyLeaves=avgEmptyLeaves;
 			this.avgHeight=avgHeight;
 			this.avgTime=avgTime;
@@ -165,7 +171,7 @@ public class TestNoGUI{
 		}
 
 		public String toString(){
-			return "\tAverage size = "+(int)avgSize+" nodes, including "+(int)avgEmptyLeaves+" empty leaves.\n"
+			return "\tAverage size = "+(int)avgSize+" fragments amongst an average "+(int)avgnNodes+" nodes, including on average "+(int)avgEmptyLeaves+" empty leaves.\n"
 					+"\tAverage height = "+(int)avgHeight+" nodes.\n"
 					+"\tAverage construction time = "+String.format("%.3f",avgTime)+"ms.\n"
 					+"\tAverage time to run painter's algorithm = "+String.format("%.3f",avgTimePainter)+"ms.\n";
