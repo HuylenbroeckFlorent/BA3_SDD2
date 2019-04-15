@@ -24,6 +24,11 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 
+/**
+* Test class with graphical interface
+*
+* @author HUYLENBROECK Florent, DACHY Corentin.
+*/
 public class TestGUI{
 	private static JFrame frame;
 	private static JPanel mainPanel;
@@ -163,11 +168,6 @@ public class TestGUI{
 				painterPanel.removeAll();
 				painterPanel.revalidate();
 				painterPanel.repaint();
-
-				System.out.println("Before : ( "+eyeX+" : "+eyeY+" )"+
-									"\nAfter : ( "+bspEyeX+" : "+bspEyeY+" )"+
-									"\nPanel : width="+bspPanel.getWidth()+" height="+bspPanel.getHeight()+
-									"\nBounds : x="+bspBoundX+" y="+bspBoundY);
 			}
 		});
 
@@ -200,7 +200,11 @@ public class TestGUI{
 	}
 
 
-
+	/**
+	* JPanel extension that draws a BSP
+	*
+	* @author HUYLENBROECK Florent, DACHY Corentin.
+	*/
 	static class BSPPanel extends JPanel{
 
 		public BSPPanel(){
@@ -249,13 +253,22 @@ public class TestGUI{
 			}
 		}
 
+		/**
+		* Sets the BSP to be drawn
+		*
+		* @param bsp 	BSP to be drawn
+		*/
 		public void setBSP(BSP bsp){
-			this.bsp = bsp;
 			bspBoundX = bsp.getXBound();
 			bspBoundY = bsp.getYBound();
 		}
 	}
 
+	/**
+	* JComponent extension to be set as glasspanel on the main frame, in order to display eye's location.
+	*
+	* @author HUYLENBROECK Florent, DACHY Corentin.
+	*/
 	static class EyePanel extends JComponent{
 
 		public EyePanel(){
@@ -273,6 +286,11 @@ public class TestGUI{
 		}
 	}
 
+	/**
+	* JPanel extension where the eye view is drawn.
+	*
+	* @author HUYLENBROECK Florent, DACHY Corentin.
+	*/
 	static class PainterLinePanel extends JPanel{
 
 		int lineWidth;
