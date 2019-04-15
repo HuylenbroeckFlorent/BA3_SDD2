@@ -12,6 +12,8 @@
 \usepackage{algorithmicx}
 \usepackage{algpseudocode}
 \usepackage{makecell}
+\usepackage{amsmath}
+\usepackage{longtable}
 
 \title{Structure de données II\\Rapport de projet}
 \author{HUYLENBROECK Florent\\DACHY Corentin\\BA3 Info}
@@ -73,13 +75,13 @@ Introduisons la notion d'\emph{oeil} $e$ dans une scène $S$. Celui-ci servira d
 	\State Dessiner les fragments de $S(v)$
 \Else
 	\If{$e$ est au-dessus de la droite de séparation $\ell$ de $v$}
-		\State \Call{paintersAlgorithm}{$v^+,e$}
-		\State Dessiner les fragments de $S(v)$
 		\State \Call{paintersAlgorithm}{$v^-,e$}
+		\State Dessiner les fragments de $S(v)$
+		\State \Call{paintersAlgorithm}{$v^+,e$}
 	\ElsIf{$e$ est en desous de la droite de séparation $\ell$ de $v$}
-		\State \Call{paintersAlgorithm}{$v^-,e$}
-		\State Dessiner les fragments de $S(v)$
 		\State \Call{paintersAlgorithm}{$v^+,e$}
+		\State Dessiner les fragments de $S(v)$
+		\State \Call{paintersAlgorithm}{$v^-,e$}
 	\Else
 		\State \Call{paintersAlgorithm}{$v^+,e$}
 		\State \Call{paintersAlgorithm}{$v^-,e$}
@@ -91,11 +93,102 @@ Introduisons la notion d'\emph{oeil} $e$ dans une scène $S$. Celui-ci servira d
 \noindent\textbf{NOTE} : la fonction \emph{Dessiner les fragments de $S(v)$} est en $O(s)$ où $s$ est le nombre de segments dans $S(v)$.\\[1cm]
 La complexité de l'algorithme du peintre va dépendre de la taille de $\tau$. Elle va donc dépendre de la fragmentation des segments de $S$ lors de la construction de $\tau$.\\
 On remarque en effet que tout le BSP est parcouru par l'algorithme car dans chaques cas, en partant d'un noeud interne, on applique l'algorithme sur ses deux fils. La récursion s'arrête uniquement lorsqu'on arrive à une feuille. Nous sommes donc pour l'instant en $O(n)$ où $n$ est le nombre de noeud de $\tau$\\[.2cm]
-A chaque noeud, l'algorithme dessine tous les segments contenus dans $S(v)$ (sauf quand $e$ se situe sur la droite de séparation $\ell$ du noeud, auquel cas il n'est pas nécessaire de dessiner les fragments dans $S(v)$ car ils ne seront pas visible depuis $e$). Nous avons donc une complexité de $O(n\cdot s)$ ce qui donne, par la manière dont nous avons défini la taille d'un BSP, $O(t)$.
+Ensuite, à chaque noeud, l'algorithme dessine tous les segments contenus dans $S(v)$ (sauf quand $e$ se situe sur la droite de séparation $\ell$ du noeud, auquel cas il n'est pas nécessaire de dessiner les fragments dans $S(v)$ car ils ne seront pas visible depuis $e$). Nous avons donc une complexité de $O(n\cdot s)$ ce qui donne, par la manière dont nous avons défini la taille d'un BSP, $O(t)$.
 
 
 \newpage
 \section{Comparaison des heuristiques}
+Pour commencer la comparaison des heuristiques, regardons au taux de fragmentation des segments lors de la construction du BSP. Calculons ce taux comme ceci :\\
+\[ \text{Taux} = \frac{t}{\text{nombre de segments de la scène}}\]
+Voici les résultats pour chaque scène :
+\begin{longtable}{|l|c|c|c|}
+\hline
+\textbf{Scène (nombre de segments)} & \textbf{RANDOM} & \textbf{ORDERED} & \textbf{FREE\_SPLITS}\\
+\hline
+RectangleSmall ($660$)&$1.04$&$1.01$&$1.04$\\
+\hline
+RectangleMedium ($1800$)&$1$&$1$&$1$\\
+\hline
+RectangleLarge ($5940$)&$1.01$&$1$&$1.01$\\
+\hline
+RectangleHuge ($16800$)&$1$&$1$&$1$\\
+\hline
+RandomSmall ($2939$)&$1.75$&$1.21$&$1.751$\\
+\hline
+RandomMedium ($11045$)&$1.75$&$1.11$&$1.75$\\
+\hline
+RandomLarge ($23504$)&$1.7$&$1.14$&$1.7$\\
+\hline
+RandomHuge ($47017$)&$1.66$&$1.06$&$1.66$\\
+\hline
+EllipsesSmall ($200$)&$1.05$&$1$&$1.05$\\
+\hline
+EllipsesMedium ($720$)&$1.04$&$1$&$1.04$\\
+\hline
+EllipsesLarge ($4500$)&$1.01$&N/A&$1.01$\\
+\hline
+\end{longtable}
+\noindent On remarque une similarité entre les heuristiques RANDOM et FREE\_SPLITS. Cette similarité avait déjà été annoncée dans l'ouvrage de référence pour ce projet, ce résultat est donc normal.\\
+On y observe aussi un net avantage de l'heuristique ORDERED par rapport aux deux autres. Cette heuristique serait donc une bonne candidate pour construire des BSP sur lesquels l'algorithme du peintre est très rapide.\\[0.5cm]
+Regardons maintenant au temps CPU (en ms) de construction des BSP :
+\begin{longtable}{|l|c|c|c|}
+\hline
+\textbf{Scène (nombre de segments)} & \textbf{RANDOM} & \textbf{ORDERED} & \textbf{FREE\_SPLITS}\\
+\hline
+RectangleSmall ($660$)&$1.708$&$3.480$&$1.322$\\
+\hline
+RectangleMedium ($1800$)&$3.644$&$4.890$&$3.277$\\
+\hline
+RectangleLarge ($5940$)&$17.525$&$54.432$&$17.210$\\
+\hline
+RectangleHuge ($16800$)&$83.955$&$426.679$&$81.534$\\
+\hline
+RandomSmall ($2939$)&$10.090$&$13.802$&$10.371$\\
+\hline
+RandomMedium ($11045$)&$63.745$&$149.688$&$60.021$\\
+\hline
+RandomLarge ($23504$)&$204.669$&$778.286$&$197.410$\\
+\hline
+RandomHuge ($47017$)&$645.144$&$2313.319$&$671.375$\\
+\hline
+EllipsesSmall ($200$)&$0.963$&$2.012$&$0.599$\\
+\hline
+EllipsesMedium ($720$)&$2.99$&$26.976$&$2.572$\\
+\hline
+EllipsesLarge ($4500$)&$37.554$&N/A&$34.945$\\
+\hline
+\end{longtable}
+\noindent Cette fois-ci, on remarque un retard de l'heuristique ORDERED par rapport aux deux autres (lesquelles sont à nouveau similaires).
+\newpage
+\noindent Pour finir, intéressons nous au temps CPU (en ms) écoulé lors de l'application de l'algorithme du peintre sur le BSP, pour un oeil $e$ situé en $(0,0)$ dans le repère.
+\begin{longtable}{|l|c|c|c|}
+\hline
+\textbf{Scène (nombre de segments)} & \textbf{RANDOM} & \textbf{ORDERED} & \textbf{FREE\_SPLITS}\\
+\hline
+RectangleSmall ($660$)&$0.057$&$0.034$&$0.029$\\
+\hline
+RectangleMedium ($1800$)&$0.075$&$0.050$&$0.045$\\
+\hline
+RectangleLarge ($5940$)&$0.250$&$0.244$&$0.237$\\
+\hline
+RectangleHuge ($16800$)&$0.635$&$0.681$&$0.553$\\
+\hline
+RandomSmall ($2939$)&$0.302$&$0.065$&$0.306$\\
+\hline
+RandomMedium ($11045$)&$1.412$&$0.133$&$1.251$\\
+\hline
+RandomLarge ($23504$)&$3.166$&$0.357$&$2.806$\\
+\hline
+RandomHuge ($47017$)&$5.620$&$0.287$&$6.156$\\
+\hline
+EllipsesSmall ($200$)&$0.035$&$0.014$&$0.011$\\
+\hline
+EllipsesMedium ($720$)&$0.057$&$0.064$&$0.032$\\
+\hline
+EllipsesLarge ($4500$)&$0.426$&N/A&$0.413$\\
+\hline
+\end{longtable}
+\noindent L'heuristique FREE\_SPLITS est légerement plus avantageuse sur les scènes structurées (rectangles, ellipses) mais l'heuristique qui se démarque le plus est ORDERED sur les scènes aléatoires, conformément à nos attentes lors de l'observation du taux de fragmentation.
 
 
 \newpage
@@ -114,7 +207,7 @@ Ouvrir un terminal, se déplacer dans le dossier \emph{code} du logiciel et exec
 $ ant test
 \end{lstlisting}
 Il est possible de spécifier les conditions de départ des test grâce aux paramètres suivants :
-\begin{itemize}%[\itemsep=0em]
+\begin{itemize}
 \item \emph{path} - Le chemin jusqu'au fichier Scene2D. La valeur par défaut est "octogone.txt".
 \item \emph{n} - Le nombre de répétitons du test. La valeur par défaut est 100.
 \item \emph{ex} - L'abscisse de l'oeil. La valeur par défaut est 0.
@@ -126,7 +219,7 @@ $ ant test -Dpath=somepath.txt
 \end{lstlisting}
 Pour modifier plusieurs paramétres, plusieurs \emph{-D} sont nécessaires.
 \begin{lstlisting}[language=bash]
-$ ant test -Dpath=somepath.txt -Dn=1000 -Dex=10.05 -Dey=3.141
+$ ant test -Dpath=somepath.txt -Dn=1000 -Dex=2.718 -Dey=3.141
 \end{lstlisting}
 \subsection*{Javadoc}
 Ouvrir un terminal, se déplacer dans le dossier \emph{code} du logiciel et executer la commande :
@@ -137,5 +230,14 @@ $ ant doc
 
 \newpage
 \section{Conclusion}
-
+\subsection*{Difficultés rencontrées}
+Grâce à l'ouvrage de référence qui nous a été donné avec l'énoncé du projet, comprendre les structures d'arbres BSP n'a pas été difficile. L'exercice préliminaire nous a demandé une petite réflexion mais l'intuition nous est vite venue.\\
+En ce qui concerne le projet principal, l'implémentation des BSP n'a pas été difficile. La partie la plus chronophage a été l'interface graphique, et plus particulièrement la fonction \emph{Dessiner les fragments de $S(v)$} de l'algorithme du peintre, décrit à la deuxième section.
+\subsection*{Résultat de la comparaison des différentes heuristiques}
+En ce qui concerne les heuristiques, ORDERED est la meilleure parmis les trois qu'il nous a été demandé d'implémenter. Le temps de construction des BSP selon cette heuristique est un peu plus long, mais une fois construit, l'application de l'algorithme du peintre se fait beaucoup plus rapidement.\\
+Dans nos tests, ce gain de performance était surtout visible sur les scènes \emph{random}. Cela renforce l'idée que ORDERED est meilleure que les deux autres car en pratique, les scènes ont un aspect aléatoire et non pas structuré.
+\subsection*{Apports}
+Un point intéressant de ce projet est qu'il est un exemple concret de l'invention d'une structure de donnée pour résoudre un problème. Nous avons en effet tous déjà expérimenté des milieux en 3 dimensions, 
+et il est donc facile de se rendre compte des problèmes que ces structures ont permise de régler.\\
+Lors de futurs projets, il sera intéressant de chercher à résoudre des problèmes en les structurant correctement, avant de penser à concevoir un algorithme de résolution.
 \end{document}

@@ -3,5 +3,5 @@
 \contentsline {subsection}{\numberline {1.2}Enonc\IeC {\'e} du probl\IeC {\`e}me}{3}
 \contentsline {section}{\numberline {2}Calcul de la complexit\IeC {\'e} de l'algorithme du peintre}{4}
 \contentsline {section}{\numberline {3}Comparaison des heuristiques}{5}
-\contentsline {section}{\numberline {4}Mode d'emploi du logiciel de test}{6}
-\contentsline {section}{\numberline {5}Conclusion}{7}
+\contentsline {section}{\numberline {4}Mode d'emploi du logiciel de test}{7}
+\contentsline {section}{\numberline {5}Conclusion}{8}
